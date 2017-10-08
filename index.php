@@ -10,9 +10,8 @@ $factory = new Factory($loop);
 
 $factory->createClient('localhost:11211')->then(
 	function (Client $client) use ($loop){
-        $client->set('name', 'test');
-
-        $client->end();
+        $client->set('key1', 'test');
+        $client->get('key1')->then('var_dump');
 	},
 	function(Exception $e){
 		print_r($e->getMessage());
