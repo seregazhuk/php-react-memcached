@@ -1,0 +1,13 @@
+{
+    "require": {
+        "react/socket": "^0.8.4",
+        "react/promise": "^2.5",
+        "react/event-loop": "^0.4.3"
+    },
+	"autoload-dev": {
+		"psr-4": {
+			"seregazhuk\\React\\Memcached\\": "src",
+			"seregazhuk\\tests\\": "tests"
+		}
+	}
+}
