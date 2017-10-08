@@ -4,6 +4,7 @@ namespace seregazhuk\React\Memcached;
 
 use React\EventLoop\LoopInterface;
 use React\Promise;
+use React\Promise\PromiseInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\Connector;
 use React\Socket\ConnectorInterface;
@@ -27,7 +28,7 @@ class Factory
 	 * Creates memcached client connected to a given connection string
 	 *
 	 * @param string $address Memcached server URI to connect to
-	 * @return \React\Promise\PromiseInterface resolves with Client or rejects with \Exception
+	 * @return PromiseInterface resolves with Client or rejects with \Exception
 	 */
 	public function createClient($address)
 	{
@@ -41,7 +42,7 @@ class Factory
 			->connector
 			->connect($parts['host'] . ':' . $parts['port'])
 			->then(function (ConnectionInterface $stream) {
-				return new Client($stream);
+				return new Client($stream, new ProtocolParser());
 		});
 
 		return $promise;
