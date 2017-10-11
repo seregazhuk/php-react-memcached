@@ -23,6 +23,10 @@ class Client
      */
     private $requests = [];
 
+    /**
+     * @param DuplexStreamInterface $stream
+     * @param ProtocolParser $parser
+     */
     public function __construct(DuplexStreamInterface $stream, ProtocolParser $parser)
     {
         $stream->on('data', function ($chunk) use ($parser) {

@@ -85,6 +85,14 @@ class ProtocolParser
         return $this->makeRetrievalCommand($command, $args);
     }
 
+    /**
+     * @param string $command
+     * @param string $key
+     * @param mixed $value
+     * @param int $flags
+     * @param int $expiration
+     * @return string
+     */
     private function makeStorageCommand($command, $key, $value, $flags = 0, $expiration = 0)
     {
         $command = implode(' ', [$command, $key, $flags, $expiration, strlen($value)]);
@@ -106,15 +114,20 @@ class ProtocolParser
         return $response === self::RESPONSE_STORED;
     }
 
+    /**
+     * @param string $response
+     * @return string|null
+     */
     private function parseReadResponse($response)
     {
-        preg_match('/VALUE \w+ \d+ \d+' . self::COMMAND_SEPARATOR . '(.*)' . self::COMMAND_SEPARATOR . 'END/', $response, $match);
+        $regExp = '/VALUE \w+ \d+ \d+' . self::COMMAND_SEPARATOR . '(.*)' . self::COMMAND_SEPARATOR . 'END/';
+        preg_match($regExp, $response, $match);
 
         return isset($match[1]) ? $match[1] : null;
     }
 
     /**
-     * @param $response
+     * @param string $response
      * @return array
      */
     private function parseResponses($response)
