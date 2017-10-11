@@ -4,6 +4,8 @@ namespace seregazhuk\React\Memcached;
 
 use LogicException;
 use React\Promise\Deferred;
+use React\Promise\Promise;
+use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
 
 class Client
@@ -34,23 +36,29 @@ class Client
             $this->handleData($parsed);
         });
 
-        $stream->on('close', [$this, 'close']);
         $this->stream = $stream;
         $this->parser = $parser;
     }
 
+    /**
+     * @param string $name
+     * @param array $args
+     * @return Promise|PromiseInterface
+     */
     public function __call($name, $args)
     {
         $request = new Deferred();
-        $promise = $request->promise();
 
         $query = $this->parser->makeRequest($name, $args);
         $this->stream->write($query);
         $this->requests[] = $request;
 
-        return $promise;
+        return $request->promise();
     }
 
+    /**
+     * @param array $data
+     */
     protected function handleData(array $data)
     {
         if (!$this->requests) {
