@@ -8,10 +8,20 @@ use React\Stream\DuplexStreamInterface;
 
 class Client
 {
-
+    /**
+     * @var ProtocolParser
+     */
     protected $parser;
-    private   $stream;
-    private   $requests = [];
+
+    /**
+     * @var DuplexStreamInterface
+     */
+    private $stream;
+
+    /**
+     * @var Deferred[]
+     */
+    private $requests = [];
 
     public function __construct(DuplexStreamInterface $stream, ProtocolParser $parser)
     {

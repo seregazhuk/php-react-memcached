@@ -9,6 +9,9 @@ use React\Socket\Connector;
 
 class Factory
 {
+    /**
+     * @var Connector
+     */
 	private $connector;
 
 	/**
