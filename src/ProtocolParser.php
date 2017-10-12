@@ -26,7 +26,6 @@ class ProtocolParser
         self::RESPONSE_RESET,
         self::RESPONSE_STORED,
         self::RESPONSE_NOT_STORED,
-        self::RESPONSE_VERSION,
     ];
 
     const COMMAND_SET = 'set';
@@ -50,22 +49,34 @@ class ProtocolParser
         self::RESPONSE_NOT_FOUND,
     ];
 
+    const COMMAND_VERSION = 'version';
+
     /**
      * @param string $data
      * @return array
      */
-    public function parseResponse($data = '')
+    public function parseRawResponse($data = '')
     {
-        $responses = $this->parseResponses($data);
+        $data = substr($data, 0, strlen($data) - strlen(self::COMMAND_SEPARATOR));
+        $lines = explode(self::COMMAND_SEPARATOR, $data);
 
         $results = [];
-        foreach ($responses as $response) {
-            if(in_array($response, self::WRITE_RESPONSE_ENDS)) {
-                $results[] = $this->parseWriteResponse($response);
-                continue;
+        $result = '';
+
+        foreach ($lines as $line) {
+            $result .= $line;
+
+            if (in_array($line, self::RESPONSE_ENDS)) {
+                $results[] = $result;
+                $result = '';
             }
 
-            $results[] = $this->parseReadResponse($response);
+            if(strpos($line, self::RESPONSE_VERSION) !== false) {
+                $results[] = $line;
+                $result = '';
+            }
+
+            $result .= self::COMMAND_SEPARATOR;
         }
 
         return $results;
@@ -127,27 +138,31 @@ class ProtocolParser
     }
 
     /**
+     * @param string $command
      * @param string $response
-     * @return array
+     * @return string
      */
-    private function parseResponses($response)
+    public function parseResponse($command, $response)
     {
-        $lines = explode(self::COMMAND_SEPARATOR, $response);
-
-        $results = [];
-        $result = '';
-
-        foreach ($lines as $line) {
-            $result .= $line;
-
-            if (in_array($line, self::RESPONSE_ENDS)) {
-                $results[] = $result;
-                $result = '';
-            }
-
-            $result .= self::COMMAND_SEPARATOR;
+        if(in_array($command, self::RETRIEVAL_COMMANDS)) {
+            return $this->parseReadResponse($response);
         }
 
-        return $results;
+        if(in_array($command, self::STORAGE_COMMANDS)) {
+            return $this->parseWriteResponse($response);
+        }
+
+        if($command == self::COMMAND_VERSION)  {
+            return $this->parseVersionResponse($response);
+        }
+    }
+
+    /**
+     * @param string $response
+     * @return string
+     */
+    private function parseVersionResponse($response)
+    {
+        return trim(str_replace(self::RESPONSE_VERSION, '', $response));
     }
 }

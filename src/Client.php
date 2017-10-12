@@ -3,7 +3,6 @@
 namespace seregazhuk\React\Memcached;
 
 use LogicException;
-use React\Promise\Deferred;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
@@ -21,7 +20,7 @@ class Client
     private $stream;
 
     /**
-     * @var Deferred[]
+     * @var Request[]
      */
     private $requests = [];
 
@@ -32,7 +31,7 @@ class Client
     public function __construct(DuplexStreamInterface $stream, ProtocolParser $parser)
     {
         $stream->on('data', function ($chunk) use ($parser) {
-            $parsed = $parser->parseResponse($chunk);
+            $parsed = $parser->parseRawResponse($chunk);
             $this->handleData($parsed);
         });
 
@@ -47,28 +46,30 @@ class Client
      */
     public function __call($name, $args)
     {
-        $request = new Deferred();
+        $request = new Request($name);
 
         $query = $this->parser->makeRequest($name, $args);
         $this->stream->write($query);
         $this->requests[] = $request;
 
-        return $request->promise();
+        return $request->getPromise();
     }
 
     /**
-     * @param array $data
+     * @param array $responses
      */
-    protected function handleData(array $data)
+    protected function handleData(array $responses)
     {
         if (!$this->requests) {
             throw new LogicException('Unexpected reply received, no matching request found');
         }
 
-        foreach ($data as $response) {
-            /* @var $request Deferred */
+        foreach ($responses as $response) {
+            /* @var $request Request */
             $request = array_shift($this->requests);
-            $request->resolve($response);
+
+            $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
+            $request->resolve($parsedResponse);
         }
     }
 }
