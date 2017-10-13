@@ -37,7 +37,8 @@ class Factory
 			->connector
 			->connect($address)
 			->then(function (ConnectionInterface $stream) {
-                return new Client($stream, new Parser(new ResponseFactory(), new RequestFactory()));
+                $parser = new Parser(new ResponseFactory(), new RequestFactory());
+                return new Client($stream, $parser);
             });
 
 		return $promise;

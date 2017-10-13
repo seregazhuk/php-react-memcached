@@ -31,13 +31,13 @@ class Client
      */
     public function __construct(DuplexStreamInterface $stream, Parser $parser)
     {
-        $stream->on('data', function ($chunk) use ($parser) {
-            $parsed = $parser->parseRawResponse($chunk);
-            $this->handleData($parsed);
-        });
-
         $this->stream = $stream;
         $this->parser = $parser;
+
+        $stream->on('data', function ($chunk) {
+            $parsed = $this->parser->parseRawResponse($chunk);
+            $this->resolveRequests($parsed);
+        });
     }
 
     /**
@@ -59,10 +59,10 @@ class Client
     /**
      * @param array $responses
      */
-    protected function handleData(array $responses)
+    protected function resolveRequests(array $responses)
     {
-        if (!$this->requests) {
-            throw new LogicException('Unexpected reply received, no matching request found');
+        if (empty($this->requests)) {
+            throw new LogicException('Received unexpected response, no matching request found');
         }
 
         foreach ($responses as $response) {
