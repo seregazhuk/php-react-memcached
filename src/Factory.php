@@ -6,6 +6,9 @@ use React\EventLoop\LoopInterface;
 use React\Promise\PromiseInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\Connector;
+use seregazhuk\React\Memcached\Protocol\Parser;
+use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
+use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 
 class Factory
 {
@@ -33,10 +36,9 @@ class Factory
 		$promise = $this
 			->connector
 			->connect($address)
-			->then(
-			    function (ConnectionInterface $stream) {
-				    return new Client($stream, new ProtocolParser());
-                });
+			->then(function (ConnectionInterface $stream) {
+                return new Client($stream, new Parser(new ResponseFactory(), new RequestFactory()));
+            });
 
 		return $promise;
 	}

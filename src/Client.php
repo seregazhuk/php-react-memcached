@@ -6,11 +6,12 @@ use LogicException;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
+use seregazhuk\React\Memcached\Protocol\Parser;
 
 class Client
 {
     /**
-     * @var ProtocolParser
+     * @var Parser
      */
     protected $parser;
 
@@ -26,9 +27,9 @@ class Client
 
     /**
      * @param DuplexStreamInterface $stream
-     * @param ProtocolParser $parser
+     * @param Parser $parser
      */
-    public function __construct(DuplexStreamInterface $stream, ProtocolParser $parser)
+    public function __construct(DuplexStreamInterface $stream, Parser $parser)
     {
         $stream->on('data', function ($chunk) use ($parser) {
             $parsed = $parser->parseRawResponse($chunk);

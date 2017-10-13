@@ -1,8 +1,11 @@
 <?php
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Protocol;
 
-class ProtocolParser
+use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
+use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
+
+class Parser
 {
     const RESPONSE_END = 'END';
     const RESPONSE_STORED = 'STORED';
@@ -52,6 +55,26 @@ class ProtocolParser
     const COMMAND_VERSION = 'version';
 
     /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
+     * @param ResponseFactory $responseFactory
+     * @param RequestFactory $requestFactory
+     */
+    public function __construct(ResponseFactory $responseFactory, RequestFactory $requestFactory)
+    {
+        $this->responseFactory = $responseFactory;
+        $this->requestFactory = $requestFactory;
+    }
+
+    /**
      * @param string $data
      * @return array
      */
@@ -89,52 +112,9 @@ class ProtocolParser
      */
     public function makeRequest($command, $args)
     {
-        if(in_array($command, self::STORAGE_COMMANDS)) {
-            return $this->makeStorageCommand($command, ...$args);
-        }
-
-        return $this->makeRetrievalCommand($command, $args);
-    }
-
-    /**
-     * @param string $command
-     * @param string $key
-     * @param mixed $value
-     * @param int $flags
-     * @param int $expiration
-     * @return string
-     */
-    private function makeStorageCommand($command, $key, $value, $flags = 0, $expiration = 0)
-    {
-        $command = implode(' ', [$command, $key, $flags, $expiration, strlen($value)]);
-
-        return $command . self::COMMAND_SEPARATOR . $value . self::COMMAND_SEPARATOR;
-    }
-    
-    private function makeRetrievalCommand($command, $args)
-    {
-        return $command . ' ' . implode(' ' , $args) . self::COMMAND_SEPARATOR;
-    }
-
-    /**
-     * @param string $response
-     * @return bool
-     */
-    private function parseWriteResponse($response)
-    {
-        return $response === self::RESPONSE_STORED;
-    }
-
-    /**
-     * @param string $response
-     * @return string|null
-     */
-    private function parseReadResponse($response)
-    {
-        $regExp = '/VALUE \w+ \d+ \d+' . self::COMMAND_SEPARATOR . '(.*)' . self::COMMAND_SEPARATOR . 'END/';
-        preg_match($regExp, $response, $match);
-
-        return isset($match[1]) ? $match[1] : null;
+        return $this->requestFactory
+            ->create($command, $args)
+            ->getCommand();
     }
 
     /**
@@ -144,25 +124,8 @@ class ProtocolParser
      */
     public function parseResponse($command, $response)
     {
-        if(in_array($command, self::RETRIEVAL_COMMANDS)) {
-            return $this->parseReadResponse($response);
-        }
-
-        if(in_array($command, self::STORAGE_COMMANDS)) {
-            return $this->parseWriteResponse($response);
-        }
-
-        if($command == self::COMMAND_VERSION)  {
-            return $this->parseVersionResponse($response);
-        }
-    }
-
-    /**
-     * @param string $response
-     * @return string
-     */
-    private function parseVersionResponse($response)
-    {
-        return trim(str_replace(self::RESPONSE_VERSION, '', $response));
+        return $this->responseFactory
+            ->makeByCommand($command, $response)
+            ->parse();
     }
 }
