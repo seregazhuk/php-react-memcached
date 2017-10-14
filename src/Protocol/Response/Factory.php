@@ -24,5 +24,9 @@ class Factory
         if($command == Parser::COMMAND_VERSION)  {
             return new VersionResponse($data);
         }
+
+        if($command == Parser::COMMAND_STATS) {
+            return new StatsResponse($data);
+        }
     }
 }

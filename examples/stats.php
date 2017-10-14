@@ -10,8 +10,8 @@ $factory = new Factory($loop);
 
 $factory->createClient('localhost:11211')->then(
 	function (Client $client) {
-        $client->version()->then(function($result){
-            echo "Memcached version: $result\n";
+        $client->stats()->then(function($result){
+            print_r($result);
         });
 	},
 	function(Exception $e){

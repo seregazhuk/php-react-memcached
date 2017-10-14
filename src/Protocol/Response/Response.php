@@ -18,7 +18,7 @@ abstract class Response
     }
 
     /**
-     * @return string|bool|null
+     * @return mixed
      */
     abstract public function parse();
 }

@@ -53,6 +53,7 @@ class Parser
     ];
 
     const COMMAND_VERSION = 'version';
+    const COMMAND_STATS = 'stats';
 
     /**
      * @var ResponseFactory
