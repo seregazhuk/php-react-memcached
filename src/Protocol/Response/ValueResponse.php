@@ -2,7 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Response;
 
-class IncrDecrResponse extends Response
+class ValueResponse extends Response
 {
     /**
      * @return string
