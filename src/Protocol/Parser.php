@@ -18,6 +18,7 @@ class Parser
     const RESPONSE_RESET = 'RESET';
     const RESPONSE_VERSION = 'VERSION';
     const RESPONSE_VALUE = 'VALUE';
+    const RESPONSE_TOUCHED = 'TOUCHED';
 
     CONST RESPONSE_ENDS = [
         self::RESPONSE_END,
@@ -29,6 +30,7 @@ class Parser
         self::RESPONSE_RESET,
         self::RESPONSE_STORED,
         self::RESPONSE_NOT_STORED,
+        self::RESPONSE_TOUCHED,
     ];
 
     const COMMAND_SET = 'set';
@@ -54,6 +56,7 @@ class Parser
 
     const COMMAND_VERSION = 'version';
     const COMMAND_STATS = 'stats';
+    const COMMAND_TOUCH = 'touch';
 
     /**
      * @var ResponseFactory

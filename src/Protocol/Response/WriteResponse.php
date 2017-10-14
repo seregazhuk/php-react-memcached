@@ -11,6 +11,6 @@ class WriteResponse extends Response
      */
     public function parse()
     {
-        return $this->data === Parser::RESPONSE_STORED;
+        return trim($this->data) === Parser::RESPONSE_STORED;
     }
 }

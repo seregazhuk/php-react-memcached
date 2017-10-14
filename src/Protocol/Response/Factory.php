@@ -28,5 +28,9 @@ class Factory
         if($command == Parser::COMMAND_STATS) {
             return new StatsResponse($data);
         }
+
+        if($command == Parser::COMMAND_TOUCH) {
+            return new TouchResponse($data);
+        }
     }
 }
