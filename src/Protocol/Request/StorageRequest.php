@@ -15,6 +15,7 @@ class StorageRequest extends Request
      */
     public function __construct($command, $key, $value, $flags = 0, $expiration = 0)
     {
+        $value = serialize($value);
         $command = implode(' ', [$command, $key, $flags, $expiration, strlen($value)]);
 
         $this->command = $command . Parser::COMMAND_SEPARATOR . $value . Parser::COMMAND_SEPARATOR;
