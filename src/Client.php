@@ -8,6 +8,21 @@ use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
+/**
+ * @method PromiseInterface set(string $key, mixed $value)
+ * @method PromiseInterface version()
+ * @method PromiseInterface verbosity(int $level)
+ * @method PromiseInterface flushAll()
+ * @method PromiseInterface get($key)
+ * @method PromiseInterface delete($key)
+ * @method PromiseInterface replace($key, $value)
+ * @method PromiseInterface incr($key, $value)
+ * @method PromiseInterface decr($key, $value)
+ * @method PromiseInterface stats()
+ * @method PromiseInterface touch($key)
+ * @method PromiseInterface add($key, $value)
+ *
+ */
 class Client
 {
     /**
@@ -58,6 +73,7 @@ class Client
 
     /**
      * @param array $responses
+     * @throws Protocol\Exception\WrongCommandException
      */
     protected function resolveRequests(array $responses)
     {
