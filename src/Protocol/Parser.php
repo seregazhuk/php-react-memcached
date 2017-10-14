@@ -39,6 +39,7 @@ class Parser
 
     const STORAGE_COMMANDS = [
         self::COMMAND_SET,
+        self::COMMAND_ADD,
     ];
 
     const COMMAND_GET = 'get';
@@ -60,6 +61,7 @@ class Parser
     const COMMAND_DELETE = 'delete';
     const COMMAND_INCREMENT = 'incr';
     const COMMAND_DECREMENT = 'decr';
+    const COMMAND_ADD = 'add';
 
     /**
      * @var ResponseFactory
