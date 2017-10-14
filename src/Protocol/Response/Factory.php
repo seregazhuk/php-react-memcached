@@ -36,5 +36,9 @@ class Factory
         if($command == Parser::COMMAND_DELETE) {
             return new DeleteResponse($data);
         }
+
+        if(in_array($command, [Parser::COMMAND_INCREMENT, Parser::COMMAND_DECREMENT])) {
+            return new IncrDecrResponse($data);
+        }
     }
 }

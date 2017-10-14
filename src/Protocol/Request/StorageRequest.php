@@ -9,13 +9,16 @@ class StorageRequest extends Request
     /**
      * @param string $command
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      * @param int $flags
      * @param int $expiration
      */
     public function __construct($command, $key, $value, $flags = 0, $expiration = 0)
     {
-        $value = serialize($value);
+        // Serialize non-numeric values. Numeric values should stay as they are
+        // because they could be incremented/decremented.
+        $value = is_numeric($value) ? $value : serialize($value);
+        
         $command = implode(' ', [$command, $key, $flags, $expiration, strlen($value)]);
 
         $this->command = $command . Parser::COMMAND_SEPARATOR . $value . Parser::COMMAND_SEPARATOR;

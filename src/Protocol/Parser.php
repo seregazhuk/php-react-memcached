@@ -58,6 +58,8 @@ class Parser
     const COMMAND_STATS = 'stats';
     const COMMAND_TOUCH = 'touch';
     const COMMAND_DELETE = 'delete';
+    const COMMAND_INCREMENT = 'incr';
+    const COMMAND_DECREMENT = 'decr';
 
     /**
      * @var ResponseFactory
@@ -105,6 +107,10 @@ class Parser
             }
 
             $result .= self::COMMAND_SEPARATOR;
+        }
+
+        if(!empty($result) && $result !== self::COMMAND_SEPARATOR) {
+            $results[] = $result;
         }
 
         return $results;

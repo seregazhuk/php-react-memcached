@@ -16,6 +16,11 @@ class ReadResponse extends Response
 
         $value = isset($match[1]) ? $match[1] : null;
 
-        return $value ? unserialize($value) : null;
+        if(is_null($value)) {
+            return $value;
+        }
+
+        // Unserialize non-numeric values
+        return is_numeric($value) ? $value : unserialize($value);
     }
 }
