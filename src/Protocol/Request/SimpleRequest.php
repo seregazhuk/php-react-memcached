@@ -12,6 +12,17 @@ class SimpleRequest extends Request
      */
     public function __construct($command, $args)
     {
+        $command = $this->camelCaseToUnderScore($command);
+
         $this->command = $command . ' ' . implode(' ' , $args) . Parser::COMMAND_SEPARATOR;
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    private function camelCaseToUnderScore($string)
+    {
+        return strtolower(ltrim(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $string), '_'));
     }
 }

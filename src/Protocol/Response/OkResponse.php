@@ -4,7 +4,7 @@ namespace seregazhuk\React\Memcached\Protocol\Response;
 
 use seregazhuk\React\Memcached\Protocol\Parser;
 
-class VerbosityResponse extends Response
+class OkResponse extends Response
 {
     /**
      * {@inheritdoc}

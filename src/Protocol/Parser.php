@@ -66,6 +66,7 @@ class Parser
     const COMMAND_ADD = 'add';
     const COMMAND_REPLACE = 'replace';
     const COMMAND_VERBOSITY = 'verbosity';
+    const COMMAND_FLUSH_ALL = 'flushAll';
 
     /**
      * @var ResponseFactory
