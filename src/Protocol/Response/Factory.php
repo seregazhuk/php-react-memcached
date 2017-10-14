@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Response;
 
+use seregazhuk\React\Memcached\Protocol\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 class Factory
@@ -10,6 +11,7 @@ class Factory
      * @param string $command
      * @param string $data
      * @return Response
+     * @throws WrongCommandException
      */
     public function makeByCommand($command, $data)
     {
@@ -44,5 +46,7 @@ class Factory
         if(in_array($command, [Parser::COMMAND_INCREMENT, Parser::COMMAND_DECREMENT])) {
             return new IncrDecrResponse($data);
         }
+
+        throw new WrongCommandException("Unknown command $command");
     }
 }
