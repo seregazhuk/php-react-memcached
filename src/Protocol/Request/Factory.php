@@ -17,6 +17,6 @@ class Factory
             return new StorageRequest($command, ...$args);
         }
 
-        return new RetrievalRequest($command, $args);
+        return new SimpleRequest($command, $args);
     }
 }

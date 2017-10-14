@@ -4,7 +4,7 @@ namespace seregazhuk\React\Memcached\Protocol\Request;
 
 use seregazhuk\React\Memcached\Protocol\Parser;
 
-class RetrievalRequest extends Request
+class SimpleRequest extends Request
 {
     /**
      * @param string $command

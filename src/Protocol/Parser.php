@@ -57,6 +57,7 @@ class Parser
     const COMMAND_VERSION = 'version';
     const COMMAND_STATS = 'stats';
     const COMMAND_TOUCH = 'touch';
+    const COMMAND_DELETE = 'delete';
 
     /**
      * @var ResponseFactory

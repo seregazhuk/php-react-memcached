@@ -32,5 +32,9 @@ class Factory
         if($command == Parser::COMMAND_TOUCH) {
             return new TouchResponse($data);
         }
+
+        if($command == Parser::COMMAND_DELETE) {
+            return new DeleteResponse($data);
+        }
     }
 }
