@@ -37,6 +37,10 @@ class Factory
             return new DeleteResponse($data);
         }
 
+        if($command == Parser::COMMAND_VERBOSITY) {
+            return new VerbosityResponse($data);
+        }
+
         if(in_array($command, [Parser::COMMAND_INCREMENT, Parser::COMMAND_DECREMENT])) {
             return new IncrDecrResponse($data);
         }

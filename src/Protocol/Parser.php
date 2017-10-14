@@ -64,6 +64,7 @@ class Parser
     const COMMAND_DECREMENT = 'decr';
     const COMMAND_ADD = 'add';
     const COMMAND_REPLACE = 'replace';
+    const COMMAND_VERBOSITY = 'verbosity';
 
     /**
      * @var ResponseFactory
