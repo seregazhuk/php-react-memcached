@@ -38,6 +38,6 @@ class Factory
                 return new ValueResponse($data);
         }
 
-        throw new WrongCommandException("Unknown command $command");
+        throw new WrongCommandException("Unknown command: $command");
     }
 }

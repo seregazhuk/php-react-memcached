@@ -6,6 +6,7 @@ use LogicException;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
+use seregazhuk\React\Memcached\Protocol\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -73,7 +74,7 @@ class Client
 
     /**
      * @param array $responses
-     * @throws Protocol\Exception\WrongCommandException
+     * @throws LogicException
      */
     protected function resolveRequests(array $responses)
     {
@@ -85,8 +86,12 @@ class Client
             /* @var $request Request */
             $request = array_shift($this->requests);
 
-            $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
-            $request->resolve($parsedResponse);
+            try {
+                $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
+                $request->resolve($parsedResponse);
+            } catch (WrongCommandException $exception) {
+                $request->reject($exception);
+            }
         }
     }
 }

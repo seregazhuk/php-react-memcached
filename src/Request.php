@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached;
 
+use Exception;
 use React\Promise\Deferred;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
@@ -49,5 +50,13 @@ class Request
     public function resolve($value)
     {
         $this->deferred->resolve($value);
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    public function reject(Exception $exception)
+    {
+        $this->deferred->reject($exception);
     }
 }
