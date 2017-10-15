@@ -69,23 +69,24 @@ class Parser
     const COMMAND_FLUSH_ALL = 'flushAll';
 
     /**
-     * @var ResponseFactory
-     */
-    private $responseFactory;
-
-    /**
      * @var RequestFactory
      */
     private $requestFactory;
 
     /**
-     * @param ResponseFactory $responseFactory
-     * @param RequestFactory $requestFactory
+     * @var ResponseFactory
      */
-    public function __construct(ResponseFactory $responseFactory, RequestFactory $requestFactory)
+    private $responseFactory;
+
+    /**
+     * @param RequestFactory $requestFactory
+
+     * @param ResponseFactory $responseFactory
+     */
+    public function __construct(RequestFactory $requestFactory, ResponseFactory $responseFactory)
     {
-        $this->responseFactory = $responseFactory;
         $this->requestFactory = $requestFactory;
+        $this->responseFactory = $responseFactory;
     }
 
     /**

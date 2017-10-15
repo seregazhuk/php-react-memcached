@@ -19,7 +19,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"seregazhuk\\React\\Memcached\\": "src/",
-			"tests\\": "tests/"
+			"seregazhuk\\React\\Memcached\\tests\\": "tests/"
 		}
 	},
     "require-dev": {

@@ -76,7 +76,7 @@ class Client
      * @param array $responses
      * @throws LogicException
      */
-    protected function resolveRequests(array $responses)
+    public function resolveRequests(array $responses)
     {
         if (empty($this->requests)) {
             throw new LogicException('Received unexpected response, no matching request found');

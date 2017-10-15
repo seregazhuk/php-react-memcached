@@ -1,6 +1,6 @@
 <?php
 
-namespace tests;
+namespace seregazhuk\React\Memcached\tests;
 
 use Mockery;
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
@@ -8,7 +8,7 @@ use React\Promise\PromiseInterface;
 
 class TestCase extends PhpUnitTestCase
 {
-    protected function expectPromiseResolve($promise)
+    protected function expectPromiseResolves($promise)
     {
         $this->assertInstanceOf(PromiseInterface::class, $promise);
 
@@ -21,16 +21,40 @@ class TestCase extends PhpUnitTestCase
         return $promise;
     }
 
+    protected function expectPromiseRejects($promise)
+    {
+        $this->assertInstanceOf(PromiseInterface::class, $promise);
+
+        /** @var PromiseInterface $promise */
+        $promise->then(null, function($error) {
+            $this->assertNull($error);
+            $this->fail('promise resolved');
+        });
+        $promise->then($this->expectCallableNever(), $this->expectCallableOnce());
+        return $promise;
+    }
+
     protected function expectCallableOnce()
     {
-        $spy = Mockery::spy();
-        $spy->shouldHaveReceived('__invoke')->once();
+        $mock = Mockery::mock(CallableStub::class);
+        $mock->shouldReceive('__invoke')->once();
+        return $mock;
     }
 
     protected function expectCallableNever()
     {
-        $spy = Mockery::spy();
-        $spy->shouldNotHaveReceived('__invoke');
+        $mock = Mockery::mock(CallableStub::class);
+        $mock->shouldNotReceive('__invoke');
+        return $mock;
     }
 
+    protected function tearDown()
+    {
+        parent::tearDown();
+        if ($container = Mockery::getContainer()) {
+            $this->addToAssertionCount($container->mockery_getExpectationCount());
+        }
+
+        Mockery::close();
+    }
 }
