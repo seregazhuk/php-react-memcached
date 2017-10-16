@@ -80,7 +80,6 @@ class Parser
 
     /**
      * @param RequestFactory $requestFactory
-
      * @param ResponseFactory $responseFactory
      */
     public function __construct(RequestFactory $requestFactory, ResponseFactory $responseFactory)
