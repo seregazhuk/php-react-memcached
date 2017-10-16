@@ -29,7 +29,7 @@ class Factory
 	 * Creates a memcached client connected to a given connection string
 	 *
 	 * @param string $address Memcached server URI to connect to
-	 * @return PromiseInterface resolves with Client or rejects with \Exception
+	 * @return PromiseInterface resolves with Client or rejects with \RuntimeException
 	 */
 	public function createClient($address)
 	{
@@ -37,10 +37,17 @@ class Factory
 			->connector
 			->connect($address)
 			->then(function (ConnectionInterface $stream) {
-                $parser = new Parser(new RequestFactory(), new ResponseFactory());
-                return new Client($stream, $parser);
+                return new Client($stream, $this->createProtocolParser());
             });
 
 		return $promise;
+	}
+
+    /**
+     * @return Parser
+     */
+    private function createProtocolParser()
+    {
+        return new Parser(new RequestFactory(), new ResponseFactory());
 	}
 }
