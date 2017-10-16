@@ -125,10 +125,10 @@ class Parser
 
     /**
      * @param string $command
-     * @param $args
+     * @param array $args
      * @return string
      */
-    public function makeRequest($command, $args)
+    public function makeRequest($command, array $args)
     {
         return $this->requestFactory
             ->create($command, $args)
