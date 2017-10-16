@@ -34,12 +34,17 @@ class Client
     /**
      * @var DuplexStreamInterface
      */
-    private $stream;
+    protected $stream;
 
     /**
      * @var Request[]
      */
-    private $requests = [];
+    protected $requests = [];
+
+    /**
+     * @var bool
+     */
+    protected $isClosed = false;
 
     /**
      * @param DuplexStreamInterface $stream
@@ -65,9 +70,13 @@ class Client
     {
         $request = new Request($name);
 
-        $query = $this->parser->makeRequest($name, $args);
-        $this->stream->write($query);
-        $this->requests[] = $request;
+        if($this->isClosed) {
+            $request->reject(new Exception('Connection closed'));
+        } else {
+            $query = $this->parser->makeRequest($name, $args);
+            $this->stream->write($query);
+            $this->requests[] = $request;
+        }
 
         return $request->getPromise();
     }
@@ -92,6 +101,22 @@ class Client
             } catch (WrongCommandException $exception) {
                 $request->reject($exception);
             }
+        }
+    }
+
+    public function close()
+    {
+        if ($this->isClosed) {
+            return;
+        }
+        $this->isClosed = true;
+        $this->stream->close();
+
+        // reject all pending requests
+        while($this->requests) {
+            $request = array_shift($this->requests);
+            /* @var $request Request */
+            $request->reject(new Exception('Connection closing'));
         }
     }
 }
