@@ -75,4 +75,28 @@ class StreamingClientTest extends TestCase
         $this->expectException(Exception::class);
         $this->client->resolveRequests(['not_valid']);
     }
+
+    /** @test */
+    public function it_rejects_pending_request_when_closing()
+    {
+        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->stream->shouldReceive('write')->once();
+        $this->stream->shouldReceive('close')->once();
+        $promise = $this->client->version();
+
+        $this->client->close();
+
+        $this->expectPromiseRejects($promise);
+    }
+
+    /** @test */
+    public function it_rejectd_all_new_requests_when_closed()
+    {
+        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->stream->shouldReceive('close')->once();
+
+        $this->client->close();
+        $promise = $this->client->version();
+        $this->expectPromiseRejects($promise);
+    }
 }
