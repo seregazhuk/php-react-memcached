@@ -2,7 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol;
 
-use seregazhuk\React\Memcached\Protocol\Exception\WrongCommandException;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 

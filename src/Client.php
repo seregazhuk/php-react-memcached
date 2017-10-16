@@ -2,11 +2,11 @@
 
 namespace seregazhuk\React\Memcached;
 
-use LogicException;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
-use seregazhuk\React\Memcached\Protocol\Exception\WrongCommandException;
+use seregazhuk\React\Memcached\Exception\Exception;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -74,12 +74,12 @@ class Client
 
     /**
      * @param array $responses
-     * @throws LogicException
+     * @throws Exception
      */
     public function resolveRequests(array $responses)
     {
         if (empty($this->requests)) {
-            throw new LogicException('Received unexpected response, no matching request found');
+            throw new Exception('Received unexpected response, no matching request found');
         }
 
         foreach ($responses as $response) {
