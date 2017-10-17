@@ -119,6 +119,7 @@ class Client
     public function end()
     {
         $this->ending = true;
+
         if (!$this->requests) {
             $this->close();
         }

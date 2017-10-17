@@ -90,12 +90,23 @@ class StreamingClientTest extends TestCase
     }
 
     /** @test */
-    public function it_rejectd_all_new_requests_when_closed()
+    public function it_rejects_all_new_requests_when_closed()
     {
         $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
         $this->stream->shouldReceive('close')->once();
 
         $this->client->close();
+        $promise = $this->client->version();
+        $this->expectPromiseRejects($promise);
+    }
+
+    /** @test */
+    public function it_rejects_all_new_requests_when_ending()
+    {
+        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->stream->shouldReceive('close')->once();
+
+        $this->client->end();
         $promise = $this->client->version();
         $this->expectPromiseRejects($promise);
     }
