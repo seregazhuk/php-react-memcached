@@ -22,7 +22,6 @@ use seregazhuk\React\Memcached\Protocol\Parser;
  * @method PromiseInterface stats()
  * @method PromiseInterface touch($key)
  * @method PromiseInterface add($key, $value)
- *
  */
 class Client
 {
@@ -49,7 +48,7 @@ class Client
     /**
      * @var bool
      */
-    protected $ending = false;
+    protected $isEnding = false;
 
     /**
      * @param DuplexStreamInterface $stream
@@ -108,7 +107,7 @@ class Client
             }
         }
 
-        if ($this->ending && !$this->requests) {
+        if ($this->isEnding && !$this->requests) {
             $this->close();
         }
     }
@@ -118,7 +117,7 @@ class Client
      */
     public function end()
     {
-        $this->ending = true;
+        $this->isEnding = true;
 
         if (!$this->requests) {
             $this->close();
@@ -134,7 +133,7 @@ class Client
             return;
         }
 
-        $this->ending = true;
+        $this->isEnding = true;
         $this->isClosed = true;
         $this->stream->close();
 
