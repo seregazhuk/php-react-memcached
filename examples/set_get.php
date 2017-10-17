@@ -8,19 +8,17 @@ require '../vendor/autoload.php';
 $loop = React\EventLoop\Factory::create();
 $factory = new Factory($loop);
 
-$factory->createClient('localhost:11211')->then(
-    function (Client $client) {
-        $client->set('name', ['test'])->then(function($result){
-            var_dump($result);
-            echo "The value was stored\n";
+$factory
+    ->createClient('localhost:11211')
+    ->then(function (Client $client) {
+        $client->set('example', 'Hello world');
+
+        $client->get('example')->then(function ($data) {
+            echo $data . PHP_EOL; // Hello world
         });
-        $client->get('name')->then(function($data){
-            var_dump($data);
-            echo "The value was retrieved\n";
-        });
-    },
-    function(Exception $e){
-        echo $e->getMessage(), "\n";
-    });
+
+        // Close the connection when all requests are resolved
+        $client->end();
+});
 
 $loop->run();
