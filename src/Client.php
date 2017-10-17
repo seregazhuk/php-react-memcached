@@ -47,6 +47,11 @@ class Client
     protected $isClosed = false;
 
     /**
+     * @var bool
+     */
+    protected $ending = false;
+
+    /**
      * @param DuplexStreamInterface $stream
      * @param Parser $parser
      */
@@ -102,13 +107,33 @@ class Client
                 $request->reject($exception);
             }
         }
+
+        if ($this->ending && !$this->requests) {
+            $this->close();
+        }
     }
 
+    /**
+     * Closes the connection when all requests are resolved
+     */
+    public function end()
+    {
+        $this->ending = true;
+        if (!$this->requests) {
+            $this->close();
+        }
+    }
+
+    /**
+     * Forces closing the connection and rejects all pending requests
+     */
     public function close()
     {
         if ($this->isClosed) {
             return;
         }
+
+        $this->ending = true;
         $this->isClosed = true;
         $this->stream->close();
 
