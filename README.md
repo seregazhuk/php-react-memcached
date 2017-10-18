@@ -24,7 +24,7 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
     - [Flush all](#flush-all)
     - [Version](#version)
     - [Verbosity](#verbosity)       
- - [Connection closing](#connection-closing)
+ - [Connection Closing](#connection-closing)
  - [Errors Handling](#errors-handling)
 
 ## Installation
@@ -34,6 +34,8 @@ Library requires PHP 5.6.0 or above.
 
 The recommended way to install this library is via [Composer](https://getcomposer.org). 
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
+
+See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 ```
 composer require ?
@@ -270,13 +272,15 @@ $client
 
 ## Connection Closing
 To close the connection call `end()` method on the client. The client waits till all pending requests are resolved and
-then closes the connection. All new requests to the client will be rejected.
+then closes the connection. All new requests to the client will be rejected with `ConnectionClosedException` exception.
 
 If you want to force the closing and don't want to wait for pending requests to be resolved, call `close()` method. It 
-immediately closes the connection and rejects all pending requests.
+immediately closes the connection and rejects all pending requests with `ConnectionClosedException` exception.
 
 ## Errors Handling
-All exceptions that are thrown by the client extend from the base `seregazhuk\React\Memcached\Exception\Exception`.
+All exceptions that are thrown by the client or are used to reject the promises extend from the
+base `seregazhuk\React\Memcached\Exception\Exception` class.
+
 For example, if you call an unknown Memcached command the promise will be rejected with `WrongCommandException`:
 
 ```php

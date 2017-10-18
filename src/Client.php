@@ -5,6 +5,7 @@ namespace seregazhuk\React\Memcached;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
+use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
@@ -75,7 +76,7 @@ class Client
         $request = new Request($name);
 
         if($this->isClosed) {
-            $request->reject(new Exception('Connection closed'));
+            $request->reject(new ConnectionClosedException('Connection closed'));
         } else {
             $query = $this->parser->makeRequest($name, $args);
             $this->stream->write($query);
@@ -141,7 +142,7 @@ class Client
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new Exception('Connection closing'));
+            $request->reject(new ConnectionClosedException('Connection closing'));
         }
     }
 }
