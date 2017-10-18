@@ -69,16 +69,44 @@ requests and once it receives the response from the server, it starts resolving 
 command returns a promise. When the server executed a command and returns a response, the promise will be resolved 
 with this response. If there was an error, the promise will be rejected. 
 
-### Set/Get
+## Retrieval Commands
+
+### Get
+Get value from key:
 
 ```php
-$client->set('example', 'Hello world')->then(function($result){
-    if($result) {
-        echo "The value was stored" . PHP_EOL;
-    }
-});
-
-$client->get('example')->then(function ($data) {
-    echo "Retreived value: " . $data . PHP_EOL; // Hello world
-});
+$client
+    ->get('some-key')
+    ->then(function ($data) {
+        echo "Retreived value: " . $data . PHP_EOL; 
+    });
 ```
+
+## Storage Commands
+
+### Set
+Store key/value pair in Memcached:
+
+```php
+$client
+    ->set('some-key', 'my-data')
+    ->then(function ($result) {
+        if($result) {
+            echo "Value was stored" . PHP_EOL;
+        } 
+    });
+```
+
+### Add
+Store key/value pair in Memcached, but only if the server **doesn’t** already hold data for this key:
+
+```php
+$client->add('name', 'test')
+    ->then(function($result) {
+        if($result) {
+            echo "The value was added\n";
+        }
+    });
+```
+
+### Replace
