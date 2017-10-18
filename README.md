@@ -85,7 +85,7 @@ $factory->createClient('localhost:11211'')->then(
 This method returns a promise. If connection was established the promise resolves with an instance of the `Client`. If 
 something went wrong and connection wasn't established the promise will be rejected.
 
-## Client
+## Asynchronous Execution
 
 For each memcached command a client has a method. All commands are executed asynchronously. The client stored pending 
 requests and once it receives the response from the server, it starts resolving these requests. That means that each 
