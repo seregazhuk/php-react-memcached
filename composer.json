@@ -1,5 +1,5 @@
 {
-    "name": "seregazhuk/memcached-react",
+    "name": "seregazhuk/react-memcached",
     "description": "Async Memcached client implementation, built on top of ReactPHP",
     "keywords": [
         "Memcached",

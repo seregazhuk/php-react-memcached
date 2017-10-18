@@ -38,7 +38,7 @@ The recommended way to install this library is via [Composer](https://getcompose
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 ```
-composer require ?
+composer require seregazhuk/react-memcached
 ```
 
 ## Quick Start
