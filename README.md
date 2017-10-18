@@ -24,6 +24,7 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
     - [Flush all](#flush-all)
     - [Version](#version)
     - [Verbosity](#verbosity)       
+ - [Connection closing](#connection-closing)
 
 ## Installation
 
@@ -264,3 +265,13 @@ $client
         echo "Verbosity was changed to 2" . PHP_EOL;
     });
 ```
+
+
+## Connection closing
+To close the connection call `end()` method on the client. The client waits till all pending requests are resolved and
+then closes the connection. All new requests to the client will be rejected.
+
+If you want to force the closing and don't want to wait for pending requests to be resolved, call `close()` method. It 
+immediately closes the connection and rejects all pending requests.
+
+
