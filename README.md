@@ -36,3 +36,49 @@ $factory
 
 $loop->run();
 ```
+See [other examples](https://github.com/seregazhuk/php-memcached-react/tree/master/examples).
+
+## Connection
+
+You can connect to server and create a client via the factory. It requires an instance of the `EventLoopInterface`:
+
+```php
+$loop = React\EventLoop\Factory::create();
+$factory = new Factory($loop);
+```
+
+Then to create a client call `createClient()` method and pass a connection string:
+```php
+$factory->createClient('localhost:11211'')->then(
+    function (Client $client) {
+        // client connected
+    },
+    function (Exception $e) {
+        // an error occurred while trying to connect 
+    }
+);
+```
+
+This method returns a promise. If connection was established the promise resolves with an instance of the `Client`. If 
+something went wrong and connection wasn't established the promise will be rejected.
+
+## Client
+
+For each memcached command a client has a method. All commands are executed asynchronously. The client stored pending 
+requests and once it receives the response from the server, it starts resolving these requests. That means that each 
+command returns a promise. When the server executed a command and returns a response, the promise will be resolved 
+with this response. If there was an error, the promise will be rejected. 
+
+### Set/Get
+
+```php
+$client->set('example', 'Hello world')->then(function($result){
+    if($result) {
+        echo "The value was stored" . PHP_EOL;
+    }
+});
+
+$client->get('example')->then(function ($data) {
+    echo "Retreived value: " . $data . PHP_EOL; // Hello world
+});
+```
