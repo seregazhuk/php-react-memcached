@@ -3,6 +3,28 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
 
 [![Build Status](https://travis-ci.org/seregazhuk/php-memcached-react.svg?branch=master)](https://travis-ci.org/seregazhuk/php-memcached-react)
 
+**Table of Contents**
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Connection](#connection)
+- [Client](#client)
+- [Retrieval Commands](#retrieval-commands)
+    - [Get](#get)
+- [Storage Commands](#storage-commands)
+    - [Set](#set)
+    - [Add](#add)
+    - [Replace](#replace)
+- [Delete Command](#delete-command)
+- [Increment/Decrement Commands](#increment/decrement-commands)
+    - [Increment](#increment)
+    - [Decrement](#decrement)
+- [Touch Command](#touch-command)
+- [Statistics Command](#statistics-command)
+- [Misc Commands](#misc-commands)
+    - [Flush all](#flush-all)
+    - [Version](#version)
+    - [Verbosity](#verbosity)       
+
 ## Installation
 
 ### Dependencies
@@ -210,7 +232,7 @@ $client
 ```
 
 ## Misc Commands
-### Flush_all
+### Flush all
 Flush the server key/value pairs (invalidating them) after an optional [<time>] period:
 
 ```php
