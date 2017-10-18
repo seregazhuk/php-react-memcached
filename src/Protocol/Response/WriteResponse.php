@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Response;
 
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 class WriteResponse extends Response
@@ -11,6 +12,10 @@ class WriteResponse extends Response
      */
     public function parse()
     {
-        return trim($this->data) === Parser::RESPONSE_STORED;
+        if(trim($this->data) === Parser::RESPONSE_STORED) {
+            throw new FailedCommandException($this->data);
+        }
+
+        return true;
     }
 }

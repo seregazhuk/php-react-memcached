@@ -2,6 +2,8 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Response;
 
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
+
 abstract class Response
 {
     /**
@@ -19,6 +21,7 @@ abstract class Response
 
     /**
      * @return mixed
+     * @throws FailedCommandException
      */
     abstract public function parse();
 }

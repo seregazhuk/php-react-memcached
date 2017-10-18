@@ -110,6 +110,8 @@ $client
 
 ## Storage Commands
 For `$flags` you can use PHP `MEMCACHE_COMPRESSED` constant to specify on-the-fly compression.
+If the value was not stored indicate because condition for `add` or `replace` commands wasn’t met, or the item was in 
+a delete queue, the promise will be rejected with `FailedCommandException`.
 
 ### Set
 Store key/value pair in Memcached:
@@ -191,6 +193,8 @@ $client
     });
 ```
 
+If value not found, the promise will be rejected with `FailedCommandException`.
+
 ### Decrement
 Decrement value associated with key in Memcached, item **must** exist, decrement command will not create it
 If you try to decrement a value bellow 0, value will stay at 0:
@@ -202,6 +206,8 @@ $client
         "New value is: " . $data . PHP_EOL;
     });
 ```
+
+If value not found, the promise will be rejected with `FailedCommandException`.
 
 ## Touch Command
 The *touch* command is used to update the expiration time of an existing item without fetching it:

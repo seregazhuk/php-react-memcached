@@ -5,9 +5,9 @@ namespace seregazhuk\React\Memcached;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
+use seregazhuk\React\Memcached\Exception\CommandException;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
-use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -103,7 +103,7 @@ class Client
             try {
                 $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
                 $request->resolve($parsedResponse);
-            } catch (WrongCommandException $exception) {
+            } catch (CommandException $exception) {
                 $request->reject($exception);
             }
         }
