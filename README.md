@@ -233,7 +233,7 @@ $client
 ```
 
 ### Verbosity
-Change the verbosity ouptut of Memcached server:
+Change the verbosity output of Memcached server:
 
 ```php
 $client
