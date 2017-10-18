@@ -83,6 +83,7 @@ $client
 ```
 
 ## Storage Commands
+For `$flags` you can use PHP `MEMCACHE_COMPRESSED` constant to specify on-the-fly compression.
 
 ### Set
 Store key/value pair in Memcached:
@@ -90,23 +91,88 @@ Store key/value pair in Memcached:
 ```php
 $client
     ->set('some-key', 'my-data')
-    ->then(function ($result) {
-        if($result) {
-            echo "Value was stored" . PHP_EOL;
-        } 
+    ->then(function () {
+        echo "Value was stored" . PHP_EOL;
     });
+    
+// advanced
+$client
+    ->set('some-key', 'my-data', $falgs, $exptime)
+    ->then(function () {
+        echo "Value was stored" . PHP_EOL;
+    });    
 ```
 
 ### Add
 Store key/value pair in Memcached, but only if the server **doesn’t** already hold data for this key:
 
 ```php
-$client->add('name', 'test')
-    ->then(function($result) {
-        if($result) {
-            echo "The value was added\n";
-        }
+$client
+    ->add('name', 'test')
+    ->then(function() {
+        echo "The value was added" . PHP_EOL;
     });
+    
+    
+// advanced   
+$client
+    ->add('name', 'test', $flags, $exptime)
+    ->then(function() {
+        echo "The value was added" . PHP_EOL;
+    });    
 ```
 
 ### Replace
+
+Store key/value pair in Memcached, but only if the server already hold data for this key:
+```php
+$client
+    ->replace('name', 'test')
+    ->then(function(){
+        echo "The value was replaced" . PHP_EOL;
+    });
+ 
+// advanced    
+$client
+    ->replace('name', 'test', $flags, $exptime)
+    ->then(function(){
+        echo "The value was replaced" . PHP_EOL;
+    });    
+```
+
+## Delete
+Delete value by key from Memcached:
+
+```php
+$client
+    ->delete('name')
+    ->then(function(){
+        echo "The value was deleted" . PHP_EOL;
+});
+```
+
+## Increment/Decrement Commands
+
+### Increment
+Increment value associated with key in Memcached, item **must** exist, increment command will not create it.
+The limit of increment is the 64 bit mark:
+
+```php
+$client
+    ->incr('var', 2)
+    ->then(function($data){
+        "New value is: " . $data . PHP_EOL;
+    });
+```
+
+### Decrement
+Decrement value associated with key in Memcached, item **must** exist, decrement command will not create it
+If you try to decrement a value bellow 0, value will stay at 0:
+
+```php
+$client
+    ->decr('var', 2)
+    ->then(function($data){
+        "New value is: " . $data . PHP_EOL;
+    });
+```
