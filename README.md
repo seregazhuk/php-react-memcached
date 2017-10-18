@@ -25,6 +25,8 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
     - [Version](#version)
     - [Verbosity](#verbosity)       
  - [Connection Closing](#connection-closing)
+    - [End](#end())
+    - [Close](#close())
  - [Errors Handling](#errors-handling)
 
 ## Installation
