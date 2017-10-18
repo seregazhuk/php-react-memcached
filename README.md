@@ -140,7 +140,7 @@ $client
     });    
 ```
 
-## Delete
+## Delete Command
 Delete value by key from Memcached:
 
 ```php
@@ -174,5 +174,71 @@ $client
     ->decr('var', 2)
     ->then(function($data){
         "New value is: " . $data . PHP_EOL;
+    });
+```
+
+## Touch Command
+The *touch* command is used to update the expiration time of an existing item without fetching it:
+
+```php
+$client
+    ->touch('var', $exp)
+    ->then(function($data){
+        "The value was toched". PHP_EOL;
+    });
+```
+
+## Statistics Command
+This command can return an array of various stats:
+
+```php
+$client
+    ->stats()
+    ->then(function($result){
+        print_r($result);
+        /*
+        Array
+        (
+            [pid] => 666
+            [uptime] => 180660
+            [time] => 1508342532
+            ... 
+            [lru_bumps_dropped] => 0
+        )
+        */
+    });
+```
+
+## Misc Commands
+### Flush_all
+Flush the server key/value pairs (invalidating them) after an optional [<time>] period:
+
+```php
+$client
+    ->flushAll()
+    ->then(function() {
+        echo "Everything was flushed" . PHP_EOL;
+    });
+```
+
+### Version
+Return the Memcached server version:
+
+```php
+$client
+    ->version()
+    ->then(function($result) {
+        echo "Memcached version: $result" . PHP_EOL; // Memcached version: 1.5.0
+     });
+```
+
+### Verbosity
+Change the verbosity ouptut of Memcached server:
+
+```php
+$client
+    ->verbosity(2)
+    ->then(function($result) {
+        echo "Verbosity was changed to 2" . PHP_EOL;
     });
 ```
