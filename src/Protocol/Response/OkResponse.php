@@ -11,6 +11,10 @@ class OkResponse extends Response
      */
     public function parse()
     {
-        return trim($this->data) === Parser::RESPONSE_OK;
+        if(trim($this->data) !== Parser::RESPONSE_OK) {
+            $this->fail();
+        }
+
+        return true;
     }
 }

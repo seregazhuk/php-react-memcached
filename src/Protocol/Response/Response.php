@@ -24,4 +24,12 @@ abstract class Response
      * @throws FailedCommandException
      */
     abstract public function parse();
+
+    /**
+     * @throws FailedCommandException
+     */
+    protected function fail()
+    {
+        throw new FailedCommandException($this->data);
+    }
 }

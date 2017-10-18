@@ -123,9 +123,9 @@ $client
         echo "Value was stored" . PHP_EOL;
     });
     
-// advanced
+// advanced: with compression and expires in 30 seconds
 $client
-    ->set('some-key', 'my-data', $falgs, $exptime)
+    ->set('some-key', 'my-data', MEMCACHE_COMPRESSED, 30)
     ->then(function () {
         echo "Value was stored" . PHP_EOL;
     });    
@@ -142,9 +142,9 @@ $client
     });
     
     
-// advanced   
+// advanced: with compression and expires in 30 seconds
 $client
-    ->add('name', 'test', $flags, $exptime)
+    ->add('name', 'test', MEMCACHE_COMPRESSED, 30)
     ->then(function() {
         echo "The value was added" . PHP_EOL;
     });    
@@ -169,7 +169,8 @@ $client
 ```
 
 ## Delete Command
-Delete value by key from Memcached:
+Delete value by key from Memcached.
+If the key doesn't exist or has been deleted the promise rejects with `FailedCommandException`:
 
 ```php
 $client
@@ -183,40 +184,53 @@ $client
 
 ### Increment
 Increment value associated with key in Memcached, item **must** exist, increment command will not create it.
-The limit of increment is the 64 bit mark:
+The limit of increment is the 64 bit mark. If key is not found, the promise will be rejected with `FailedCommandException`:
 
 ```php
 $client
     ->incr('var', 2)
-    ->then(function($data){
-        "New value is: " . $data . PHP_EOL;
-    });
+    ->then(
+        function($data){
+            echo "New value is: " . $data . PHP_EOL;
+        }, 
+        function(FailedCommandException $e) {
+            echo "Key not found" . PHP_EOL;
+        });
 ```
 
-If value not found, the promise will be rejected with `FailedCommandException`.
 
 ### Decrement
 Decrement value associated with key in Memcached, item **must** exist, decrement command will not create it
-If you try to decrement a value bellow 0, value will stay at 0:
+If you try to decrement a value bellow 0, value will stay at 0. If key is not found, the promise 
+will be rejected with `FailedCommandException`:
 
 ```php
 $client
     ->decr('var', 2)
-    ->then(function($data){
-        "New value is: " . $data . PHP_EOL;
-    });
+    ->then(
+        function($data){
+            echo "New value is: " . $data . PHP_EOL;
+        },
+        function(FailedCommandException $e) {
+            echo "Key not found" . PHP_EOL;
+        });
 ```
 
 If value not found, the promise will be rejected with `FailedCommandException`.
 
 ## Touch Command
-The *touch* command is used to update the expiration time of an existing item without fetching it:
+The *touch* command is used to update the expiration time of an existing item without fetching it. If the key doesn't 
+ exist or has been deleted the promise rejects with `FailedCommandException`:
 
 ```php
 $client
     ->touch('var', $exp)
-    ->then(function($data){
-        "The value was toched". PHP_EOL;
+    ->then(
+    function($data){
+        echo "The value was toched". PHP_EOL;
+    },
+    function(FailedCommandException $e) {
+        echo "Key not found" . PHP_EOL;
     });
 ```
 

@@ -14,7 +14,7 @@ class ValueResponse extends Response
     public function parse()
     {
         if($this->data == Parser::RESPONSE_NOT_FOUND) {
-            throw new FailedCommandException($this->data);
+            $this->fail();
         }
 
         return trim($this->data);
