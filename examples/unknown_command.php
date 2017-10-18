@@ -2,7 +2,6 @@
 
 use seregazhuk\React\Memcached\Factory;
 use seregazhuk\React\Memcached\Client;
-use seregazhuk\React\Memcached\Protocol\Exception\Exception;
 
 require '../vendor/autoload.php';
 
