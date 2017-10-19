@@ -1,6 +1,10 @@
 # Memcached ReactPHP Client
 Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem.
 
+<p align="center">
+    <img src="logo.png" alt="ReactPHP Memcached Client">
+</p>
+
 [![Build Status](https://travis-ci.org/seregazhuk/php-react-memcached.svg?branch=master)](https://travis-ci.org/seregazhuk/php-react-memcached)
 
 **Table of Contents**
