@@ -7,7 +7,7 @@
         "async",
         "ReactPHP"
     ],
-    "homepage": "https://github.com/seregazhuk/php-memcached-react",
+    "homepage": "https://github.com/seregazhuk/php-react-memcached",
     "license": "MIT",
     "authors": [
         {
