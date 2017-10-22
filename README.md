@@ -318,3 +318,5 @@ $client
         echo $e->getMessage() . PHP_EOL; // Unknown command: unknown
 });
 ``` 
+
+When the connection is broken all pending promises will be rejected with `ConnectionClosedException` exception.

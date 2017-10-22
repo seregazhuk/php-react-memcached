@@ -64,6 +64,12 @@ class Client
             $parsed = $this->parser->parseRawResponse($chunk);
             $this->resolveRequests($parsed);
         });
+
+        $stream->on('close', function() {
+            if(!$this->isEnding) {
+                $this->close();
+            }
+        });
     }
 
     /**

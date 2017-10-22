@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## v0.1.2 - 2017-10-22
+### Fixed:
+ - handling broken connections
+
 ## v0.1.1 - 2017-10-19
 ### Fixed:
  - autoload in composer.json
