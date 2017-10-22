@@ -2,8 +2,11 @@
 
 namespace seregazhuk\React\Memcached;
 
+use React\Promise\Deferred;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
+use React\Socket\ConnectionInterface;
+use React\Socket\ConnectorInterface;
 use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Exception\CommandException;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
@@ -34,6 +37,11 @@ class Client
     /**
      * @var DuplexStreamInterface
      */
+    protected $connector;
+
+    /**
+     * @var DuplexStreamInterface
+     */
     protected $stream;
 
     /**
@@ -52,18 +60,28 @@ class Client
     protected $isEnding = false;
 
     /**
-     * @param DuplexStreamInterface $stream
+     * @var string[]
+     */
+    protected $queries = [];
+
+    /**
+     * @var bool
+     */
+    protected $connecting = false;
+
+    /**
+     * @var string
+     */
+    protected $address;
+
+    /**
+     * @param ConnectorInterface $connector
      * @param Parser $parser
      */
-    public function __construct(DuplexStreamInterface $stream, Parser $parser)
+    public function __construct(ConnectorInterface $connector, Parser $parser)
     {
-        $this->stream = $stream;
+        $this->connector = $connector;
         $this->parser = $parser;
-
-        $stream->on('data', function ($chunk) {
-            $parsed = $this->parser->parseRawResponse($chunk);
-            $this->resolveRequests($parsed);
-        });
     }
 
     /**
@@ -79,11 +97,27 @@ class Client
             $request->reject(new ConnectionClosedException('Connection closed'));
         } else {
             $query = $this->parser->makeRequest($name, $args);
-            $this->stream->write($query);
+            $this->write($query);
             $this->requests[] = $request;
         }
 
         return $request->getPromise();
+    }
+
+    /**
+     * @param string $query
+     */
+    protected function write($query)
+    {
+        if($this->stream) {
+            $this->stream->write($query);
+            return;
+        }
+
+        $this->queries[] = $query;
+        if(!$this->connecting) {
+            $this->connect($this->address);
+        }
     }
 
     /**
@@ -136,7 +170,9 @@ class Client
 
         $this->isEnding = true;
         $this->isClosed = true;
-        $this->stream->close();
+        if($this->stream) {
+            $this->stream->close();
+        }
 
         // reject all pending requests
         while($this->requests) {
@@ -144,5 +180,50 @@ class Client
             /* @var $request Request */
             $request->reject(new ConnectionClosedException('Connection closing'));
         }
+    }
+
+    /**
+     * @param string $address
+     * @return PromiseInterface
+     */
+    public function connect($address)
+    {
+        $this->connecting = true;
+        $this->address = $address;
+
+        return $this->connector
+            ->connect($this->address)
+            ->then(
+                [$this, 'initConnection'],
+                function() {
+                    $this->connecting = false;
+                }
+            );
+    }
+
+    /**
+     * @param ConnectionInterface $stream
+     */
+    public function initConnection(ConnectionInterface $stream)
+    {
+        $this->stream = $stream;
+        $this->connecting = false;
+
+        // write all pending queries
+        while ($this->queries) {
+            $query = array_shift($this->queries);
+            $this->stream->write($query);
+        }
+
+        // handle responses
+        $stream->on('data', function ($chunk) {
+            $parsed = $this->parser->parseRawResponse($chunk);
+            $this->resolveRequests($parsed);
+        });
+
+        // try to reconnect if connection was broken
+        $stream->on('close', function () {
+            $this->close();
+        });
     }
 }
