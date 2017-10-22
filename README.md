@@ -91,8 +91,17 @@ $factory->createClient('localhost:11211'')->then(
 );
 ```
 
+
 This method returns a promise. If connection was established the promise resolves with an instance of the `Client`. If 
 something went wrong and connection wasn't established the promise will be rejected.
+
+
+By default factory uses standard Memcached address `localhost:11211`, so you can omit it when creating a client:
+```php
+$factory->createClient()->then(
+    // ...
+);
+```
 
 ## Asynchronous Execution
 

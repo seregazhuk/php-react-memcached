@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed:
  - handling broken connections
  - added events (`close`)
+ - `createClient()` uses default Memcached address
 
 ## v0.1.1 - 2017-10-19
 ### Fixed:
