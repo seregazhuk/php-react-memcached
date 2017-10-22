@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## v0.1.2 - 2017-10-22
+## v0.1.2 - ?
 ### Fixed:
  - handling broken connections
  - added events (`close`)
