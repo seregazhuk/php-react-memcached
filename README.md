@@ -27,10 +27,11 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
     - [Flush all](#flush-all)
     - [Version](#version)
     - [Verbosity](#verbosity)       
- - [Connection Closing](#connection-closing)
+- [Connection Closing](#connection-closing)
     - [End](#end())
     - [Close](#close())
- - [Errors Handling](#errors-handling)
+- [Events Handling](#events-handling)
+- [Errors Handling](#errors-handling)
 
 ## Installation
 
@@ -304,6 +305,19 @@ then closes the connection. All new requests to the client will be rejected with
 ### Close()
 If you want to force the closing and don't want to wait for pending requests to be resolved, call `close()` method. It 
 immediately closes the connection and rejects all pending requests with `ConnectionClosedException` exception.
+
+## Events Handling
+You can register event handlers for some client's events.
+
+### close
+When the connection to Memcached server is closed, the `close` event is emitted. You can listen to this event to catch
+connection failures:
+
+```php
+$client->on('close', function () {
+    // handle closed connection
+});
+```
 
 ## Errors Handling
 All exceptions that are thrown by the client or are used to reject the promises extend from the

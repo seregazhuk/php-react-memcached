@@ -110,4 +110,13 @@ class StreamingClientTest extends TestCase
         $promise = $this->client->version();
         $this->expectPromiseRejects($promise);
     }
+
+	/** @test */
+	public function it_emits_close_event_when_closing()
+	{
+		$this->stream->shouldReceive('close')->once();
+
+		$this->client->on('close', $this->expectCallableOnce());
+		$this->client->end();
+    }
 }

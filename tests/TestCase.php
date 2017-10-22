@@ -34,6 +34,9 @@ abstract class TestCase extends PhpUnitTestCase
         return $promise;
     }
 
+	/**
+	 * @return Mockery\MockInterface|callable
+	 */
     protected function expectCallableOnce()
     {
         $mock = Mockery::mock(CallableStub::class);

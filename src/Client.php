@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached;
 
+use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
@@ -24,7 +25,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
  * @method PromiseInterface touch($key)
  * @method PromiseInterface add($key, $value)
  */
-class Client
+class Client extends EventEmitter
 {
     /**
      * @var Parser
@@ -142,7 +143,9 @@ class Client
 
         $this->isEnding = true;
         $this->isClosed = true;
+
         $this->stream->close();
+        $this->emit('close');
 
         // reject all pending requests
         while($this->requests) {
