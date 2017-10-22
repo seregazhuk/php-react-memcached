@@ -31,10 +31,10 @@ class Factory
      * @param string $address Memcached server URI to connect to
      * @return PromiseInterface resolves with Client or rejects with \RuntimeException
      */
-    public function createClient($address = '')
+    public function createClient($address = 'localhost:11211')
     {
         $promise = $this->connector
-            ->connect($this->parseAddress($address))
+            ->connect($address)
             ->then(function (ConnectionInterface $stream) {
                 return new Client($stream, $this->createProtocolParser());
             });
@@ -48,10 +48,5 @@ class Factory
     private function createProtocolParser()
     {
         return new Parser(new RequestFactory(), new ResponseFactory());
-    }
-
-	private function parseAddress($address)
-	{
-		return empty($address) ? 'localhost:11211' : $address;
     }
 }
