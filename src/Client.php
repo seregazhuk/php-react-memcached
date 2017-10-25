@@ -88,7 +88,7 @@ class Client extends EventEmitter
         $request = new Request($name);
 
         if($this->isEnding) {
-            $request->reject(new ConnectionClosedException('Connection closed'));
+            $request->reject(new ConnectionClosedException());
         } else {
             $query = $this->parser->makeRequest($name, $args);
             $this->stream->write($query);
@@ -156,7 +156,7 @@ class Client extends EventEmitter
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new ConnectionClosedException('Connection closed'));
+            $request->reject(new ConnectionClosedException());
         }
     }
 }
