@@ -12,16 +12,14 @@ $factory->createClient('localhost:11211')->then(
     function (Client $client) {
         $client->set('name', 'test')->then(function(){
             echo "The value was stored\n";
+        });
+        $client->end();
+        $client->get('name')->then(function($data){
+            var_dump($data);
+            echo "The value was retrieved\n";
         }, function(Exception $e){
             echo $e->getMessage(), "\n";
         });
-        $client->end();
-        //$client->get('name')->then(function($data){
-        //    var_dump($data);
-        //    echo "The value was retrieved\n";
-        //}, function(Exception $e){
-        //    print_r($e->getMessage());
-        //});
     },
     function(Exception $e){
         echo $e->getMessage(), "\n";
