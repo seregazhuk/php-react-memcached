@@ -156,7 +156,7 @@ class Client extends EventEmitter
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new ConnectionClosedException('Connection closing'));
+            $request->reject(new ConnectionClosedException('Connection closed'));
         }
     }
 }
