@@ -43,11 +43,16 @@ class Client extends EventEmitter
     protected $requests = [];
 
     /**
+     * Indicates that the connection is closed.
+     *
      * @var bool
      */
     protected $isClosed = false;
 
     /**
+     * Indicates that we don't accept new requests but we are still waiting for
+     * pending requests to be resolved.
+     *
      * @var bool
      */
     protected $isEnding = false;
@@ -82,7 +87,7 @@ class Client extends EventEmitter
     {
         $request = new Request($name);
 
-        if($this->isClosed) {
+        if($this->isEnding) {
             $request->reject(new ConnectionClosedException('Connection closed'));
         } else {
             $query = $this->parser->makeRequest($name, $args);
