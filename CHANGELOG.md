@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
  - handling broken connections
  - `createClient()` uses default Memcached address
  - don't allow new requests when *is ending* or *is closed*
+ - write response resolving
  
 ### Added:
  - client can emit events (`close`)
