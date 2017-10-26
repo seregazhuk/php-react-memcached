@@ -10,12 +10,11 @@ $factory = new Factory($loop);
 
 $factory->createClient('localhost:11211')->then(
     function (Client $client) {
-        $client->unknown()->then('var_dump', function(Exception $e){
-            echo $e->getMessage();
-        });
-    },
-    function(Exception $e){
-        echo 'Error connecting to server: ' . $e->getMessage();
+        $client
+            ->someCommand()
+            ->then('var_dump', function(Exception $e){
+                echo $e->getMessage();
+            });
     });
 
 $loop->run();

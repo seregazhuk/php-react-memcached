@@ -9,6 +9,7 @@ use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Exception\CommandException;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -90,9 +91,13 @@ class Client extends EventEmitter
         if($this->isEnding) {
             $request->reject(new ConnectionClosedException());
         } else {
-            $query = $this->parser->makeRequest($name, $args);
-            $this->stream->write($query);
-            $this->requests[] = $request;
+            try {
+                $query = $this->parser->makeRequest($name, $args);
+                $this->stream->write($query);
+                $this->requests[] = $request;
+            } catch (WrongCommandException $e) {
+                $request->reject($e);
+            }
         }
 
         return $request->getPromise();

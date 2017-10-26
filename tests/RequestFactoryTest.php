@@ -3,6 +3,7 @@
 namespace seregazhuk\React\Memcached\tests;
 
 use PHPUnit\Framework\TestCase;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Request\Factory;
 use seregazhuk\React\Memcached\Protocol\Request\Request;
 use seregazhuk\React\Memcached\Protocol\Request\SimpleRequest;
@@ -29,5 +30,13 @@ class RequestFactoryTest extends TestCase
     {
         $factory = new Factory();
         $this->assertInstanceOf(StorageRequest::class, $factory->create('set', ['key', 'val']));
+    }
+
+    /** @test */
+    public function it_throws_exception_for_unknown_command()
+    {
+        $this->expectException(WrongCommandException::class);
+        $factory = new Factory();
+        $factory->create('unknown', []);
     }
 }

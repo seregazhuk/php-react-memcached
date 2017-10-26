@@ -48,12 +48,7 @@ class StreamingClientTest extends TestCase
     /** @test */
     public function it_rejects_a_promise_when_unsupported_command_is_called()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("not_valid\n\r");
-        $this->stream->shouldReceive('write')->once();
         $promise = $this->client->not_valid();
-
-        $this->client->resolveRequests(['not_valid']);
-
         $this->expectPromiseRejects($promise);
     }
 
