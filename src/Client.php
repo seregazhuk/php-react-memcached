@@ -6,9 +6,9 @@ use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Stream\DuplexStreamInterface;
-use seregazhuk\React\Memcached\Exception\CommandException;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
@@ -120,7 +120,7 @@ class Client extends EventEmitter
             try {
                 $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
                 $request->resolve($parsedResponse);
-            } catch (CommandException $exception) {
+            } catch (FailedCommandException $exception) {
                 $request->reject($exception);
             }
         }
