@@ -9,9 +9,10 @@ All notable changes to this project will be documented in this file.
  - write response resolving
  - wrong commands are rejected immediately
  - handle failed commands 
+ - handle broken connection
  
 ### Added:
- - client can emit events (`close`)
+ - client can emit events (`close`, `error`)
 
 ## v0.1.1 - 2017-10-19
 ### Fixed:

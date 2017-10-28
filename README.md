@@ -328,7 +328,26 @@ $client->on('close', function () {
 });
 ```
 
+### error
+When an error occurs in the connection, the client emits `error` event and passes an exception 
+with the problem description:
+
+```php
+$client->on('error', function (Exception $e) {
+    // handle error
+});
+```
+
+For example you can handle broken connections like this:
+
+```php
+$client->on('error', function (ConnectionClosedException $e) {
+    // handle broken connection
+});
+```
+
 ## Errors Handling
+
 All exceptions that are thrown by the client or are used to reject the promises extend from the
 base `seregazhuk\React\Memcached\Exception\Exception` class.
 
@@ -343,3 +362,4 @@ $client
 ``` 
 
 When the connection is broken all pending promises will be rejected with `ConnectionClosedException` exception.
+

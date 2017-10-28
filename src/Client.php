@@ -74,6 +74,7 @@ class Client extends EventEmitter
 
         $stream->on('close', function() {
             if(!$this->isEnding) {
+                $this->emit('error', [new ConnectionClosedException()]);
                 $this->close();
             }
         });
