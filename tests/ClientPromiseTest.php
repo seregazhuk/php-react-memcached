@@ -6,7 +6,10 @@ use Mockery;
 use Mockery\MockInterface;
 use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Client;
+use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
@@ -48,7 +51,7 @@ class ClientPromiseTest extends PromiseTestCase
     public function it_rejects_a_promise_when_unsupported_command_is_called()
     {
         $promise = $this->client->not_valid();
-        $this->expectPromiseRejects($promise);
+        $this->expectPromiseRejectsWith($promise, WrongCommandException::class);
     }
 
     /** @test */
@@ -80,7 +83,7 @@ class ClientPromiseTest extends PromiseTestCase
 
         $this->client->close();
 
-        $this->expectPromiseRejects($promise);
+        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
     /** @test */
@@ -91,7 +94,7 @@ class ClientPromiseTest extends PromiseTestCase
 
         $this->client->close();
         $promise = $this->client->version();
-        $this->expectPromiseRejects($promise);
+        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
     /** @test */
@@ -102,7 +105,7 @@ class ClientPromiseTest extends PromiseTestCase
 
         $this->client->end();
         $promise = $this->client->version();
-        $this->expectPromiseRejects($promise);
+        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
 	/** @test */
