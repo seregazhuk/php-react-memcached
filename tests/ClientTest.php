@@ -11,7 +11,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 
-class StreamingClientTest extends TestCase
+class ClientTest extends TestCase
 {    /**
  * @var DuplexStreamInterface|MockInterface
  */
@@ -54,7 +54,7 @@ class StreamingClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("12345\n\r");
+        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -73,7 +73,7 @@ class StreamingClientTest extends TestCase
     /** @test */
     public function it_rejects_pending_request_when_closing()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->parser->shouldReceive('makeRequest')->once();
         $this->stream->shouldReceive('write')->once();
         $this->stream->shouldReceive('close')->once();
         $promise = $this->client->version();
@@ -86,7 +86,7 @@ class StreamingClientTest extends TestCase
     /** @test */
     public function it_rejects_all_new_requests_when_closed()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->parser->shouldNotReceive('makeRequest');
         $this->stream->shouldReceive('close')->once();
 
         $this->client->close();
@@ -97,7 +97,7 @@ class StreamingClientTest extends TestCase
     /** @test */
     public function it_rejects_all_new_requests_when_ending()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->parser->shouldNotReceive('makeRequest');
         $this->stream->shouldReceive('close')->once();
 
         $this->client->end();
