@@ -6,7 +6,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
 use React\Promise\PromiseInterface;
 
-abstract class TestCase extends PhpUnitTestCase
+abstract class PromiseTestCase extends PhpUnitTestCase
 {
     protected function expectPromiseResolves($promise)
     {

@@ -11,7 +11,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 
-class ClientTest extends TestCase
+class ClientPromiseTest extends PromiseTestCase
 {    /**
  * @var DuplexStreamInterface|MockInterface
  */
