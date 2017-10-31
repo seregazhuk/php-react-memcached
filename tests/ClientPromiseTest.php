@@ -60,7 +60,7 @@ class ClientPromiseTest extends PromiseTestCase
 
         $this->client->resolveRequests(['12345']);
 
-        $this->expectPromiseResolves($promise);
+        $this->expectPromiseResolvesWith($promise, '12345');
     }
 
     /** @test */

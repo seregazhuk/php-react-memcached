@@ -8,7 +8,7 @@ use React\Promise\PromiseInterface;
 
 abstract class PromiseTestCase extends PhpUnitTestCase
 {
-    protected function expectPromiseResolves($promise)
+    protected function expectPromiseResolvesWith($promise, $value)
     {
         $this->assertInstanceOf(PromiseInterface::class, $promise);
 
@@ -17,7 +17,7 @@ abstract class PromiseTestCase extends PhpUnitTestCase
             $this->assertNull($error);
             $this->fail('promise rejected');
         });
-        $promise->then($this->expectCallableOnce(), $this->expectCallableNever());
+        $promise->then($this->expectCallableOnce([$value]), $this->expectCallableNever());
         return $promise;
     }
 
@@ -34,13 +34,20 @@ abstract class PromiseTestCase extends PhpUnitTestCase
         return $promise;
     }
 
-	/**
-	 * @return Mockery\MockInterface|callable
-	 */
-    protected function expectCallableOnce()
+    /**
+     * @param array $parameters
+     * @return Mockery\MockInterface|callable
+     */
+    protected function expectCallableOnce(array $parameters = [])
     {
         $mock = Mockery::mock(CallableStub::class);
-        $mock->shouldReceive('__invoke')->once();
+
+        if ($parameters) {
+            $mock->shouldReceive('__invoke')->withArgs($parameters)->once();
+        } else {
+            $mock->shouldReceive('__invoke')->once();
+        }
+
         return $mock;
     }
 
