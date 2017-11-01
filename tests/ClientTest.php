@@ -8,13 +8,12 @@ use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
-use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 
-class ClientPromiseTest extends PromiseTestCase
+class ClientTest extends PromiseTestCase
 {    /**
  * @var DuplexStreamInterface|MockInterface
  */
