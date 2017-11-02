@@ -6,16 +6,34 @@ use Evenement\EventEmitter;
 use React\Promise\PromiseInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\ConnectorInterface;
+use React\Stream\DuplexStreamInterface;
 
 class Connection extends EventEmitter
 {
+    /**
+     * @var bool
+     */
     protected $isConnecting;
+
+    /**
+     * @var DuplexStreamInterface
+     */
     protected $stream;
-    private   $address;
+
+    /**
+     * @var string[]
+     */
+    protected $queries = [];
+
+    /**
+     * @var string
+     */
+    protected $address;
+
     /**
      * @var ConnectorInterface
      */
-    private $connector;
+    protected $connector;
 
     /**
      * @param $address
@@ -33,7 +51,7 @@ class Connection extends EventEmitter
      */
     public function connect($address = '')
     {
-        if(!empty($address)) {
+        if (!empty($address)) {
             $this->address = $address;
         }
 
@@ -47,6 +65,13 @@ class Connection extends EventEmitter
             );
     }
 
+    public function close()
+    {
+        if($this->stream) {
+            $this->stream->close();
+        }
+    }
+
     /**
      * @param ConnectionInterface $stream
      */
@@ -54,35 +79,41 @@ class Connection extends EventEmitter
     {
         $this->stream = $stream;
         $this->isConnecting = false;
-
-        // write all pending queries
-        while ($this->queries) {
-            $query = array_shift($this->queries);
-            $this->stream->write($query);
-        }
+        $this->emit('connected');
 
         $stream->on('data', function ($chunk) {
-            $this->emit([$chunk]);
+            $this->emit('data', [$chunk]);
         });
 
-        $stream->on('close', function() {
-            if(!$this->isEnding) {
-                $this->emit('error', [new ConnectionClosedException()]);
-                $this->close();
-            }
+        $stream->on('close', function () {
+            $this->emit('close');
         });
+
+        while($this->queries) {
+            $this->stream->write(array_shift($this->queries));
+        }
     }
 
     public function onConnectionFailed()
     {
         $this->isConnecting = false;
-        // reject all pending requests
-        while($this->requests) {
-            $request = array_shift($this->requests);
-            /* @var $request Request */
-            $request->reject(new ConnectionFailedException());
+        $this->emit('failed');
+        $this->queries = [];
+    }
+
+    /**
+     * @param string $query
+     */
+    public function write($query)
+    {
+        if($this->stream) {
+            $this->stream->write($query);
+            return;
         }
 
-        $this->queries = [];
+        $this->queries[] = $query;
+        if(!$this->isConnecting) {
+            $this->connect();
+        }
     }
 }

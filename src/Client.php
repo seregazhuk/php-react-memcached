@@ -5,9 +5,6 @@ namespace seregazhuk\React\Memcached;
 use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
-use React\Socket\ConnectionInterface;
-use React\Socket\ConnectorInterface;
-use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\ConnectionFailedException;
 use seregazhuk\React\Memcached\Exception\Exception;
@@ -37,16 +34,6 @@ class Client extends EventEmitter
     protected $parser;
 
     /**
-     * @var DuplexStreamInterface
-     */
-    protected $connector;
-
-    /**
-     * @var DuplexStreamInterface
-     */
-    protected $stream;
-
-    /**
      * @var Request[]
      */
     protected $requests = [];
@@ -67,30 +54,34 @@ class Client extends EventEmitter
     protected $isEnding = false;
 
     /**
-     * @var string[]
+     * @var Connection
      */
-    protected $queries = [];
+    private $connection;
 
     /**
-     * @var bool
-     */
-    protected $isConnecting = false;
-
-    /**
-     * @var string
-     */
-    protected $address;
-
-    /**
-     * @param string $address
-     * @param ConnectorInterface $connector
+     * @param Connection $connection
      * @param Parser $parser
      */
-    public function __construct($address, ConnectorInterface $connector, Parser $parser)
+    public function __construct(Connection $connection, Parser $parser)
     {
-        $this->connector = $connector;
         $this->parser = $parser;
-        $this->address = $address;
+        $this->connection = $connection;
+
+        $this->connection->on('data', function ($chunk) {
+            $parsed = $this->parser->parseRawResponse($chunk);
+            $this->resolveRequests($parsed);
+        });
+
+        $this->connection->on('failed', function () {
+            $this->rejectPendingRequestsWith(new ConnectionFailedException());
+        });
+
+        $this->connection->on('close', function() {
+            if(!$this->isEnding) {
+                $this->emit('error', [new ConnectionClosedException()]);
+                $this->close();
+            }
+        });
     }
 
     /**
@@ -107,7 +98,7 @@ class Client extends EventEmitter
         } else {
             try {
                 $query = $this->parser->makeRequest($name, $args);
-                $this->write($query);
+                $this->connection->write($query);
                 $this->requests[] = $request;
             } catch (WrongCommandException $e) {
                 $request->reject($e);
@@ -115,22 +106,6 @@ class Client extends EventEmitter
         }
 
         return $request->getPromise();
-    }
-
-    /**
-     * @param string $query
-     */
-    protected function write($query)
-    {
-        if($this->stream) {
-            $this->stream->write($query);
-            return;
-        }
-
-        $this->queries[] = $query;
-        if(!$this->isConnecting) {
-            $this->connect();
-        }
     }
 
     /**
@@ -184,76 +159,21 @@ class Client extends EventEmitter
         $this->isEnding = true;
         $this->isClosed = true;
 
-        if($this->stream) {
-            $this->stream->close();
-        }
+        $this->connection->close();
         $this->emit('close');
 
-        // reject all pending requests
-        while($this->requests) {
-            $request = array_shift($this->requests);
-            /* @var $request Request */
-            $request->reject(new ConnectionClosedException());
-        }
+        $this->rejectPendingRequestsWith(new ConnectionClosedException());
     }
 
     /**
-     * @param string $address
-     * @return PromiseInterface
+     * @param Exception $exception
      */
-    public function connect($address = '')
+    protected function rejectPendingRequestsWith(Exception $exception)
     {
-        if(!empty($address)) {
-            $this->address = $address;
-        }
-
-        $this->isConnecting = true;
-
-        return $this->connector
-            ->connect($this->address)
-            ->then(
-                [$this, 'onConnected'],
-                [$this, 'onConnectionFailed']
-            );
-    }
-
-    /**
-     * @param ConnectionInterface $stream
-     */
-    public function onConnected(ConnectionInterface $stream)
-    {
-        $this->stream = $stream;
-        $this->isConnecting = false;
-
-        // write all pending queries
-        while ($this->queries) {
-            $query = array_shift($this->queries);
-            $this->stream->write($query);
-        }
-
-        $stream->on('data', function ($chunk) {
-            $parsed = $this->parser->parseRawResponse($chunk);
-            $this->resolveRequests($parsed);
-        });
-
-        $stream->on('close', function() {
-            if(!$this->isEnding) {
-                $this->emit('error', [new ConnectionClosedException()]);
-                $this->close();
-            }
-        });
-    }
-
-    public function onConnectionFailed()
-    {
-        $this->isConnecting = false;
-        // reject all pending requests
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new ConnectionFailedException());
+            $request->reject($exception);
         }
-
-        $this->queries = [];
     }
 }

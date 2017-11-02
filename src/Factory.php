@@ -18,7 +18,7 @@ class Factory
      */
     public static function createClient(LoopInterface $loop, $address = 'localhost:11211')
     {
-        return new Client($address, new Connector($loop), self::createProtocolParser());
+        return new Client(new Connection($address, new Connector($loop)),  self::createProtocolParser());
     }
 
     /**
