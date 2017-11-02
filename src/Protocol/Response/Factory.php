@@ -2,7 +2,6 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Response;
 
-use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 class Factory
