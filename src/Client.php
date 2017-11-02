@@ -56,7 +56,7 @@ class Client extends EventEmitter
     /**
      * @var Connection
      */
-    private $connection;
+    protected $connection;
 
     /**
      * @param Connection $connection
@@ -67,19 +67,23 @@ class Client extends EventEmitter
         $this->parser = $parser;
         $this->connection = $connection;
 
+        $this->setConnectionHandlers();
+    }
+
+    protected function setConnectionHandlers()
+    {
         $this->connection->on('data', function ($chunk) {
             $parsed = $this->parser->parseRawResponse($chunk);
             $this->resolveRequests($parsed);
         });
 
-        $this->connection->on('failed', function () {
+        $this->connection->on('failed', function() {
             $this->rejectPendingRequestsWith(new ConnectionFailedException());
         });
 
-        $this->connection->on('close', function() {
-            if(!$this->isEnding) {
+        $this->connection->on('close', function () {
+            if (!$this->isEnding) {
                 $this->emit('error', [new ConnectionClosedException()]);
-                $this->close();
             }
         });
     }

@@ -11,11 +11,6 @@ use React\Stream\DuplexStreamInterface;
 class Connection extends EventEmitter
 {
     /**
-     * @var bool
-     */
-    protected $isConnecting;
-
-    /**
      * @var DuplexStreamInterface
      */
     protected $stream;
@@ -36,7 +31,12 @@ class Connection extends EventEmitter
     protected $connector;
 
     /**
-     * @param $address
+     * @var bool
+     */
+    protected $isConnecting = false;
+
+    /**
+     * @param string $address
      * @param ConnectorInterface $connector
      */
     public function __construct($address, ConnectorInterface $connector)
@@ -46,30 +46,18 @@ class Connection extends EventEmitter
     }
 
     /**
-     * @param string $address
      * @return PromiseInterface
      */
-    public function connect($address = '')
+    public function connect()
     {
-        if (!empty($address)) {
-            $this->address = $address;
-        }
-
         $this->isConnecting = true;
 
         return $this->connector
             ->connect($this->address)
             ->then(
                 [$this, 'onConnected'],
-                [$this, 'onConnectionFailed']
+                [$this, 'onFailed']
             );
-    }
-
-    public function close()
-    {
-        if($this->stream) {
-            $this->stream->close();
-        }
     }
 
     /**
@@ -79,26 +67,32 @@ class Connection extends EventEmitter
     {
         $this->stream = $stream;
         $this->isConnecting = false;
-        $this->emit('connected');
 
         $stream->on('data', function ($chunk) {
             $this->emit('data', [$chunk]);
         });
 
-        $stream->on('close', function () {
-            $this->emit('close');
-        });
+        $stream->on('close', [$this, 'close']);
 
         while($this->queries) {
             $this->stream->write(array_shift($this->queries));
         }
     }
 
-    public function onConnectionFailed()
+    public function onFailed()
     {
-        $this->isConnecting = false;
+        $this->cancelConnecting();
         $this->emit('failed');
-        $this->queries = [];
+    }
+
+    public function close()
+    {
+        if($this->stream) {
+            $this->stream->close();
+        }
+
+        $this->cancelConnecting();
+        $this->emit('close');
     }
 
     /**
@@ -106,7 +100,7 @@ class Connection extends EventEmitter
      */
     public function write($query)
     {
-        if($this->stream) {
+        if($this->stream && $this->stream->isWritable()) {
             $this->stream->write($query);
             return;
         }
@@ -115,5 +109,11 @@ class Connection extends EventEmitter
         if(!$this->isConnecting) {
             $this->connect();
         }
+    }
+
+    private function cancelConnecting()
+    {
+        $this->isConnecting = false;
+        $this->queries = [];
     }
 }
