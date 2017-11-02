@@ -9,8 +9,10 @@ use React\Socket\ConnectionInterface;
 use React\Socket\ConnectorInterface;
 use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
+use seregazhuk\React\Memcached\Exception\ConnectionFailedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\FailedCommandException;
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -72,7 +74,7 @@ class Client extends EventEmitter
     /**
      * @var bool
      */
-    protected $connecting = false;
+    protected $isConnecting = false;
 
     /**
      * @var string
@@ -80,13 +82,15 @@ class Client extends EventEmitter
     protected $address;
 
     /**
+     * @param string $address
      * @param ConnectorInterface $connector
      * @param Parser $parser
      */
-    public function __construct(ConnectorInterface $connector, Parser $parser)
+    public function __construct($address, ConnectorInterface $connector, Parser $parser)
     {
         $this->connector = $connector;
         $this->parser = $parser;
+        $this->address = $address;
     }
 
     /**
@@ -103,7 +107,7 @@ class Client extends EventEmitter
         } else {
             try {
                 $query = $this->parser->makeRequest($name, $args);
-                $this->stream->write($query);
+                $this->write($query);
                 $this->requests[] = $request;
             } catch (WrongCommandException $e) {
                 $request->reject($e);
@@ -124,8 +128,8 @@ class Client extends EventEmitter
         }
 
         $this->queries[] = $query;
-        if(!$this->connecting) {
-            $this->connect($this->address);
+        if(!$this->isConnecting) {
+            $this->connect();
         }
     }
 
@@ -197,28 +201,29 @@ class Client extends EventEmitter
      * @param string $address
      * @return PromiseInterface
      */
-    public function connect($address)
+    public function connect($address = '')
     {
-        $this->connecting = true;
-        $this->address = $address;
+        if(!empty($address)) {
+            $this->address = $address;
+        }
+
+        $this->isConnecting = true;
 
         return $this->connector
             ->connect($this->address)
             ->then(
-                [$this, 'initConnection'],
-                function() {
-                    $this->connecting = false;
-                }
+                [$this, 'onConnected'],
+                [$this, 'onConnectionFailed']
             );
     }
 
     /**
      * @param ConnectionInterface $stream
      */
-    public function initConnection(ConnectionInterface $stream)
+    public function onConnected(ConnectionInterface $stream)
     {
         $this->stream = $stream;
-        $this->connecting = false;
+        $this->isConnecting = false;
 
         // write all pending queries
         while ($this->queries) {
@@ -237,5 +242,18 @@ class Client extends EventEmitter
                 $this->close();
             }
         });
+    }
+
+    public function onConnectionFailed()
+    {
+        $this->isConnecting = false;
+        // reject all pending requests
+        while($this->requests) {
+            $request = array_shift($this->requests);
+            /* @var $request Request */
+            $request->reject(new ConnectionFailedException());
+        }
+
+        $this->queries = [];
     }
 }

@@ -13,11 +13,12 @@ class Factory
     /**
      * Creates a memcached client
      * @param LoopInterface $loop
+     * @param string $address
      * @return Client
      */
-    public static function createClient(LoopInterface $loop)
+    public static function createClient(LoopInterface $loop, $address = 'localhost:11211')
     {
-        return new Client(new Connector($loop), self::createProtocolParser());
+        return new Client($address, new Connector($loop), self::createProtocolParser());
     }
 
     /**

@@ -18,7 +18,7 @@ $factory->createClient('localhost:11211')->then(
         });
 	},
 	function(Exception $e){
-		echo 'Error connecting to server: ' . $e->getMessage();
+		echo 'Error isConnecting to server: ' . $e->getMessage();
 	});
 
 $loop->run();
