@@ -11,7 +11,7 @@ class WriteResponse extends Response
      */
     public function parse()
     {
-        if(trim($this->data) === Parser::RESPONSE_STORED) {
+        if(trim($this->data) !== Parser::RESPONSE_STORED) {
             $this->fail();
         }
 

@@ -11,7 +11,6 @@ class Factory
      * @param string $command
      * @param string $data
      * @return Response
-     * @throws WrongCommandException
      */
     public function makeByCommand($command, $data)
     {
@@ -37,7 +36,5 @@ class Factory
             case Parser::COMMAND_DECREMENT:
                 return new ValueResponse($data);
         }
-
-        throw new WrongCommandException("Unknown command: $command");
     }
 }

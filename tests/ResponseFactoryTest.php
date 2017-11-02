@@ -15,12 +15,4 @@ class ResponseFactoryTest extends TestCase
         $factory = new Factory();
         $this->assertInstanceOf(Response::class, $factory->makeByCommand('version', 'version 123'));
     }
-
-    /** @test */
-    public function it_throws_exception_for_unknown_command()
-    {
-        $this->expectException(WrongCommandException::class);
-        $factory = new Factory();
-        $factory->makeByCommand('unknown', 'some-response');
-    }
 }

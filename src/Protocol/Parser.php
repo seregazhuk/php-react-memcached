@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol;
 
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
@@ -68,6 +69,21 @@ class Parser
     const COMMAND_VERBOSITY = 'verbosity';
     const COMMAND_FLUSH_ALL = 'flushAll';
 
+    const COMMANDS = [
+        self::COMMAND_ADD,
+        self::COMMAND_DECREMENT,
+        self::COMMAND_DELETE,
+        self::COMMAND_FLUSH_ALL,
+        self::COMMAND_GET,
+        self::COMMAND_INCREMENT,
+        self::COMMAND_REPLACE,
+        self::COMMAND_SET,
+        self::COMMAND_STATS,
+        self::COMMAND_TOUCH,
+        self::COMMAND_VERBOSITY,
+        self::COMMAND_VERSION,
+    ];
+
     /**
      * @var RequestFactory
      */
@@ -127,6 +143,7 @@ class Parser
      * @param string $command
      * @param array $args
      * @return string
+     * @throws WrongCommandException
      */
     public function makeRequest($command, array $args)
     {
@@ -139,7 +156,7 @@ class Parser
      * @param string $command
      * @param string $response
      * @return string
-     * @throws WrongCommandException
+     * @throws FailedCommandException
      */
     public function parseResponse($command, $response)
     {

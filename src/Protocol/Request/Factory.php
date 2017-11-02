@@ -2,6 +2,7 @@
 
 namespace seregazhuk\React\Memcached\Protocol\Request;
 
+use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 class Factory
@@ -10,9 +11,14 @@ class Factory
      * @param string $command
      * @param array $args
      * @return Request
+     * @throws WrongCommandException
      */
     public function create($command, $args)
     {
+        if(!in_array($command, Parser::COMMANDS)) {
+            throw new WrongCommandException("Unknown command: $command");
+        }
+
         if(in_array($command, Parser::STORAGE_COMMANDS)) {
             return new StorageRequest($command, ...$args);
         }

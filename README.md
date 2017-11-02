@@ -27,10 +27,11 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
     - [Flush all](#flush-all)
     - [Version](#version)
     - [Verbosity](#verbosity)       
- - [Connection Closing](#connection-closing)
+- [Connection Closing](#connection-closing)
     - [End](#end())
     - [Close](#close())
- - [Errors Handling](#errors-handling)
+- [Events Handling](#events-handling)
+- [Errors Handling](#errors-handling)
 
 ## Installation
 
@@ -90,8 +91,17 @@ $factory->createClient('localhost:11211'')->then(
 );
 ```
 
+
 This method returns a promise. If connection was established the promise resolves with an instance of the `Client`. If 
 something went wrong and connection wasn't established the promise will be rejected.
+
+
+By default factory uses standard Memcached address `localhost:11211`, so you can omit it when creating a client:
+```php
+$factory->createClient()->then(
+    // ...
+);
+```
 
 ## Asynchronous Execution
 
@@ -305,7 +315,39 @@ then closes the connection. All new requests to the client will be rejected with
 If you want to force the closing and don't want to wait for pending requests to be resolved, call `close()` method. It 
 immediately closes the connection and rejects all pending requests with `ConnectionClosedException` exception.
 
+## Events Handling
+You can register event handlers for some client's events.
+
+### close
+When the connection to Memcached server is closed, the `close` event is emitted. You can listen to this event to catch
+connection failures:
+
+```php
+$client->on('close', function () {
+    // handle closed connection
+});
+```
+
+### error
+When an error occurs in the connection, the client emits `error` event and passes an exception 
+with the problem description:
+
+```php
+$client->on('error', function (Exception $e) {
+    // handle error
+});
+```
+
+For example you can handle broken connections like this:
+
+```php
+$client->on('error', function (ConnectionClosedException $e) {
+    // handle broken connection
+});
+```
+
 ## Errors Handling
+
 All exceptions that are thrown by the client or are used to reject the promises extend from the
 base `seregazhuk\React\Memcached\Exception\Exception` class.
 
@@ -318,3 +360,6 @@ $client
         echo $e->getMessage() . PHP_EOL; // Unknown command: unknown
 });
 ``` 
+
+When the connection is broken all pending promises will be rejected with `ConnectionClosedException` exception.
+

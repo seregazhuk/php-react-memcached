@@ -3,12 +3,13 @@
 namespace seregazhuk\React\Memcached\tests;
 
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as PhpUnitTestCase;
 use React\Promise\PromiseInterface;
 
-abstract class TestCase extends PhpUnitTestCase
+abstract class PromiseTestCase extends PhpUnitTestCase
 {
-    protected function expectPromiseResolves($promise)
+    protected function expectPromiseResolvesWith($promise, $value)
     {
         $this->assertInstanceOf(PromiseInterface::class, $promise);
 
@@ -17,11 +18,11 @@ abstract class TestCase extends PhpUnitTestCase
             $this->assertNull($error);
             $this->fail('promise rejected');
         });
-        $promise->then($this->expectCallableOnce(), $this->expectCallableNever());
+        $promise->then($this->expectCallableOnce([$value]), $this->expectCallableNever());
         return $promise;
     }
 
-    protected function expectPromiseRejects($promise)
+    protected function expectPromiseRejectsWith($promise, $reason)
     {
         $this->assertInstanceOf(PromiseInterface::class, $promise);
 
@@ -30,14 +31,39 @@ abstract class TestCase extends PhpUnitTestCase
             $this->assertNull($error);
             $this->fail('promise resolved');
         });
-        $promise->then($this->expectCallableNever(), $this->expectCallableOnce());
+        $promise->then($this->expectCallableNever(), $this->expectCallableOnceWithArgumentOfType($reason));
         return $promise;
     }
 
-    protected function expectCallableOnce()
+    /**
+     * @param array $parameters
+     * @return MockInterface|callable
+     */
+    protected function expectCallableOnce(array $parameters = [])
     {
         $mock = Mockery::mock(CallableStub::class);
-        $mock->shouldReceive('__invoke')->once();
+
+        if ($parameters) {
+            $mock->shouldReceive('__invoke')->withArgs($parameters)->once();
+        } else {
+            $mock->shouldReceive('__invoke')->once();
+        }
+
+        return $mock;
+    }
+
+    /**
+     * @param string $type
+     * @return MockInterface|callable
+     */
+    protected function expectCallableOnceWithArgumentOfType($type)
+    {
+        $mock = Mockery::mock(CallableStub::class);
+
+        $mock->shouldReceive('__invoke')
+            ->with(Mockery::type($type))
+            ->once();
+
         return $mock;
     }
 

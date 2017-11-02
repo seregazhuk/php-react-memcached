@@ -13,7 +13,7 @@ class ValueResponse extends Response
      */
     public function parse()
     {
-        if($this->data == Parser::RESPONSE_NOT_FOUND) {
+        if($this->data === Parser::RESPONSE_NOT_FOUND) {
             $this->fail();
         }
 

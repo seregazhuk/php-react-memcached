@@ -2,15 +2,15 @@
 
 namespace seregazhuk\React\Memcached;
 
-use React\Promise\Deferred;
+use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use React\Socket\ConnectionInterface;
 use React\Socket\ConnectorInterface;
 use React\Stream\DuplexStreamInterface;
-use seregazhuk\React\Memcached\Exception\CommandException;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
+use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
@@ -27,7 +27,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
  * @method PromiseInterface touch($key)
  * @method PromiseInterface add($key, $value)
  */
-class Client
+class Client extends EventEmitter
 {
     /**
      * @var Parser
@@ -50,11 +50,16 @@ class Client
     protected $requests = [];
 
     /**
+     * Indicates that the connection is closed.
+     *
      * @var bool
      */
     protected $isClosed = false;
 
     /**
+     * Indicates that we don't accept new requests but we are still waiting for
+     * pending requests to be resolved.
+     *
      * @var bool
      */
     protected $isEnding = false;
@@ -93,12 +98,16 @@ class Client
     {
         $request = new Request($name);
 
-        if($this->isClosed) {
-            $request->reject(new ConnectionClosedException('Connection closed'));
+        if($this->isEnding) {
+            $request->reject(new ConnectionClosedException());
         } else {
-            $query = $this->parser->makeRequest($name, $args);
-            $this->write($query);
-            $this->requests[] = $request;
+            try {
+                $query = $this->parser->makeRequest($name, $args);
+                $this->stream->write($query);
+                $this->requests[] = $request;
+            } catch (WrongCommandException $e) {
+                $request->reject($e);
+            }
         }
 
         return $request->getPromise();
@@ -137,7 +146,7 @@ class Client
             try {
                 $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
                 $request->resolve($parsedResponse);
-            } catch (CommandException $exception) {
+            } catch (FailedCommandException $exception) {
                 $request->reject($exception);
             }
         }
@@ -170,15 +179,17 @@ class Client
 
         $this->isEnding = true;
         $this->isClosed = true;
+
         if($this->stream) {
             $this->stream->close();
         }
+        $this->emit('close');
 
         // reject all pending requests
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new ConnectionClosedException('Connection closing'));
+            $request->reject(new ConnectionClosedException());
         }
     }
 
@@ -215,15 +226,16 @@ class Client
             $this->stream->write($query);
         }
 
-        // handle responses
         $stream->on('data', function ($chunk) {
             $parsed = $this->parser->parseRawResponse($chunk);
             $this->resolveRequests($parsed);
         });
 
-        // try to reconnect if connection was broken
-        $stream->on('close', function () {
-            $this->close();
+        $stream->on('close', function() {
+            if(!$this->isEnding) {
+                $this->emit('error', [new ConnectionClosedException()]);
+                $this->close();
+            }
         });
     }
 }

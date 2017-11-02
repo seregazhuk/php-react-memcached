@@ -11,9 +11,9 @@ $factory = new Factory($loop);
 $factory->createClient('localhost:11211')->then(
     function (Client $client) {
         $client
-            ->someCommand()
+            ->touch('some_key', 12)
             ->then('var_dump', function(Exception $e){
-                echo $e->getMessage();
+                echo 'Error: ' . $e->getMessage();
             });
     });
 
