@@ -1,27 +1,21 @@
 <?php
 
 use seregazhuk\React\Memcached\Factory;
-use seregazhuk\React\Memcached\Client;
 
 require '../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
-$factory = new Factory($loop);
+$client = Factory::createClient($loop);
 
-$factory->createClient('localhost:11211')->then(
-    function (Client $client) {
-        $client->set('name', ['test'])->then(function($result){
-            var_dump($result);
-            echo "The value was stored\n";
-        });
-        $client->flushAll()->then('var_dump');
-        $client->get('name')->then(function($data){
-            var_dump($data);
-            echo "The value was retrieved\n";
-        });
-    },
-    function(Exception $e){
-        echo $e->getMessage(), "\n";
-    });
+$client->set('name', ['test'])->then(function($result){
+    var_dump($result);
+    echo "The value was stored\n";
+});
+$client->flushAll()->then('var_dump');
+$client->get('name')->then(function($data){
+    var_dump($data);
+    echo "The value was retrieved\n";
+});
+
 
 $loop->run();
