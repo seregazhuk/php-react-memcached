@@ -6,7 +6,6 @@ use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
-use seregazhuk\React\Memcached\Exception\ConnectionFailedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
@@ -78,7 +77,7 @@ class Client extends EventEmitter
         });
 
         $this->connection->on('failed', function() {
-            $this->rejectPendingRequestsWith(new ConnectionFailedException());
+            $this->rejectPendingRequestsWith(new ConnectionClosedException());
         });
 
         $this->connection->on('close', function () {
