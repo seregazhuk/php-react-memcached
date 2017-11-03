@@ -22,7 +22,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
  * @method PromiseInterface incr($key, $value)
  * @method PromiseInterface decr($key, $value)
  * @method PromiseInterface stats()
- * @method PromiseInterface touch($key)
+ * @method PromiseInterface touch($key, $exp)
  * @method PromiseInterface add($key, $value)
  */
 class Client extends EventEmitter
