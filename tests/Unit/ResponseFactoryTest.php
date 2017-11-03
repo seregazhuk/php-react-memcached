@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached\tests;
+namespace seregazhuk\React\Memcached\tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
