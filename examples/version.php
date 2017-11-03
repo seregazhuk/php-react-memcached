@@ -1,12 +1,12 @@
 <?php
 
-use seregazhuk\React\Memcached\Client;
+use seregazhuk\React\Memcached\Factory;
 
 require '../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 
-$client = new Client($loop);
+$client = Factory::createClient($loop);
 $client->version()->then(function($result){
     echo "Memcached version: $result\n";
 });
