@@ -9,7 +9,7 @@ Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem
 **Table of Contents**
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Connection](#connection)
+- [Server Address](#server-address)
 - [Client](#client)
 - [Retrieval Commands](#retrieval-commands)
     - [Get](#get)
@@ -50,58 +50,35 @@ composer require seregazhuk/react-memcached
 ## Quick Start
 
 ```php
+require '../vendor/autoload.php';
+
+use seregazhuk\React\Memcached\Factory;
+
 $loop = React\EventLoop\Factory::create();
-$factory = new Factory($loop);
+$client = Factory::createClient($loop);
 
-$factory
-    ->createClient('localhost:11211')
-    ->then(function (Client $client) {
-        $client->set('example', 'Hello world');
+$client->set('example', 'Hello world');
 
-        $client->get('example')->then(function ($data) {
-            echo $data . PHP_EOL; // Hello world
-        });
-
-        // Close the connection when all requests are resolved
-        $client->end();
+$client->get('example')->then(function ($data) {
+    echo $data . PHP_EOL; // Hello world
 });
+
+// Close the connection when all requests are resolved
+$client->end();
 
 $loop->run();
 ```
 See [other examples](https://github.com/seregazhuk/php-memcached-react/tree/master/examples).
 
-## Connection
+## Server address
 
-You can connect to server and create a client via the factory. It requires an instance of the `EventLoopInterface`:
+When creating a client via the factory you can specify server address as a second argument:
 
 ```php
-$loop = React\EventLoop\Factory::create();
-$factory = new Factory($loop);
+$client = Factory::createClient($loop, 'localhost:11222');
 ```
 
-Then to create a client call `createClient()` method and pass a connection string:
-```php
-$factory->createClient('localhost:11211'')->then(
-    function (Client $client) {
-        // client connected
-    },
-    function (Exception $e) {
-        // an error occurred while trying to connect 
-    }
-);
-```
-
-
-This method returns a promise. If connection was established the promise resolves with an instance of the `Client`. If 
-something went wrong and connection wasn't established the promise will be rejected.
-
-
-By default factory uses standard Memcached address `localhost:11211`, so you can omit it when creating a client:
-```php
-$factory->createClient()->then(
-    // ...
-);
-```
+If the address is not specified the client uses default `localhost:11211`.
 
 ## Asynchronous Execution
 
