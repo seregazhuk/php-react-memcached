@@ -34,7 +34,7 @@ class Factory
      * @param $address
      * @return Connection
      */
-    private static function createConnection(LoopInterface $loop, $address)
+    protected static function createConnection(LoopInterface $loop, $address)
     {
         return new Connection($address, new Connector($loop));
     }
