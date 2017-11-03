@@ -1,12 +1,12 @@
 <?php
 
+use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
-use seregazhuk\React\Memcached\Factory;
 
 require '../vendor/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
-$client = Factory::createClient($loop);
+$client = new Client($loop);
 
 $loop->addPeriodicTimer(1, function() use ($client) {
     $client->version()->then(function($version){

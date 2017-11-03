@@ -3,13 +3,18 @@
 namespace seregazhuk\React\Memcached;
 
 use Evenement\EventEmitter;
+use React\EventLoop\LoopInterface;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
+use React\Socket\Connector;
+use React\Socket\ConnectorInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
+use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
+use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 
 /**
  * @method PromiseInterface set(string $key, mixed $value)
@@ -58,15 +63,28 @@ class Client extends EventEmitter
     protected $connection;
 
     /**
-     * @param Connection $connection
-     * @param Parser $parser
+     * @param LoopInterface $loop
+     * @param string $address
+     * @param ConnectorInterface|null $connector
      */
-    public function __construct(Connection $connection, Parser $parser)
+    public function __construct(LoopInterface $loop, $address = 'localhost:11211', ConnectorInterface $connector = null)
     {
-        $this->parser = $parser;
-        $this->connection = $connection;
+        if($connector === null) {
+            $connector = new Connector($loop);
+        }
+
+        $this->parser = $this->createProtocolParser();
+        $this->connection = new Connection($address, $connector);
 
         $this->setConnectionHandlers();
+    }
+
+    /**
+     * @return Parser
+     */
+    protected function createProtocolParser()
+    {
+        return new Parser(new RequestFactory(), new ResponseFactory());
     }
 
     protected function setConnectionHandlers()
