@@ -4,12 +4,9 @@ php:
   - 5.6
 
 services:
-  - redis-server
+  - memcached
 
 sudo: false
-
-env:
-  - REDIS_URI=localhost
 
 before_script:
   - composer install --prefer-source --no-interaction --dev
