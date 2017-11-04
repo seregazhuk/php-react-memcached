@@ -5,8 +5,8 @@ namespace seregazhuk\React\Memcached\tests\Functional;
 use Clue\React\Block;
 use PHPUnit\Framework\TestCase;
 use React\EventLoop\LoopInterface;
-use React\Promise\Promise;
 use React\EventLoop\Factory as LoopFactory;
+use React\Promise\PromiseInterface;
 
 class WaitTestCase extends TestCase
 {
@@ -21,25 +21,37 @@ class WaitTestCase extends TestCase
     }
 
     /**
-     * @param Promise $promise
+     * @param PromiseInterface $promise
      * @return mixed
      * @throws \Exception
      */
-    protected function waitForPromiseResolves(Promise $promise)
+    public function waitForPromiseResolves(PromiseInterface $promise)
     {
         return Block\await($promise, $this->loop);
     }
 
     /**
-     * @param Promise $promise
+     * @param PromiseInterface $promise
      * @return string
      */
-    protected function waitForPromiseRejects(Promise $promise)
+    protected function waitForPromiseRejects(PromiseInterface $promise)
     {
         try {
             Block\await($promise, $this->loop);
         } catch (\Exception $exception) {
             return $exception->getMessage();
         }
+
+        $this->fail('Promise was resolved');
+    }
+
+    /**
+     * @param mixed $value
+     * @param PromiseInterface $promise
+     * @throws \Exception
+     */
+    public function assertPromiseResolvesWith($value, PromiseInterface $promise)
+    {
+        $this->assertEquals($value, $this->waitForPromiseResolves($promise));
     }
 }

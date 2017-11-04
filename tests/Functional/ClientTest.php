@@ -2,10 +2,6 @@
 
 namespace seregazhuk\React\Memcached\tests\Functional;
 
-use Clue\React\Block;
-use PHPUnit\Framework\TestCase;
-use React\EventLoop\Factory as LoopFactory;
-use React\EventLoop\LoopInterface;
 use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Factory as ClientFactory;
 
@@ -29,8 +25,7 @@ class ClientTest extends WaitTestCase
         $setPromise = $this->client->set('key', [12345]);
         $this->waitForPromiseResolves($setPromise);
 
-        $getPromise = $this->client->get('key');
-        $this->assertEquals([12345], $this->waitForPromiseResolves($getPromise));
+        $this->assertPromiseResolvesWith([12345], $this->client->get('key'));
     }
 
     /** @test */
@@ -40,7 +35,6 @@ class ClientTest extends WaitTestCase
         $this->waitForPromiseResolves($this->client->flushAll());
 
         $getPromise = $this->client->get('key');
-
         $this->waitForPromiseRejects($getPromise);
     }
 
@@ -50,8 +44,7 @@ class ClientTest extends WaitTestCase
         $this->waitForPromiseResolves($this->client->set('key', 11));
         $this->waitForPromiseResolves($this->client->incr('key', 1));
 
-        $newVal = $this->waitForPromiseResolves($this->client->get('key'));
-        $this->assertEquals(12, $newVal);
+        $this->assertPromiseResolvesWith(12, $this->client->get('key'));
     }
 
     /** @test */
@@ -60,7 +53,41 @@ class ClientTest extends WaitTestCase
         $this->waitForPromiseResolves($this->client->set('key', 10));
         $this->waitForPromiseResolves($this->client->decr('key', 1));
 
-        $newVal = $this->waitForPromiseResolves($this->client->get('key'));
-        $this->assertEquals(9, $newVal);
+        $this->assertPromiseResolvesWith(9, $this->client->get('key'));
+    }
+
+    /** @test */
+    public function it_stores_value_with_expiration()
+    {
+        $setPromise = $this->client->set('key', [12345], 0 , 1);
+        $this->waitForPromiseResolves($setPromise);
+
+        sleep(2);
+
+        $getPromise = $this->client->get('key');
+        $this->waitForPromiseRejects($getPromise);
+    }
+
+    /** @test */
+    public function it_deletes_key()
+    {
+        $setPromise = $this->client->set('key', [12345], 0 , 1);
+        $this->waitForPromiseResolves($setPromise);
+
+        $this->waitForPromiseResolves($this->client->delete('key'));
+
+        $getPromise = $this->client->get('key');
+        $this->waitForPromiseRejects($getPromise);
+    }
+
+    /** @test */
+    public function it_replaces_value()
+    {
+        $setPromise = $this->client->set('key', [12345], 0 , 1);
+        $this->waitForPromiseResolves($setPromise);
+        $this->waitForPromiseResolves($this->client->replace('key', 'new value'));
+
+        $getPromise = $this->client->get('key');
+        $this->assertPromiseResolvesWith('new value', $getPromise);
     }
 }
