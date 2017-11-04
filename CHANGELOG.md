@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
  - wrong commands are rejected immediately
  - handle failed commands 
  - handle broken connection
+ - retrieve value after decrement
  
 ### Added:
  - client can emit events (`close`, `error`)

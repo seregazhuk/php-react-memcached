@@ -14,7 +14,7 @@ class ReadResponse extends Response
         $regExp = '/VALUE \w+ \d+ \d+' . Parser::COMMAND_SEPARATOR . '(.*)' . Parser::COMMAND_SEPARATOR . 'END/';
         preg_match($regExp, $this->data, $match);
 
-        $value = isset($match[1]) ? $match[1] : null;
+        $value = isset($match[1]) ? trim($match[1]) : null;
 
         if(null === $value) {
             $this->fail();
