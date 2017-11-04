@@ -9,21 +9,17 @@ use React\EventLoop\LoopInterface;
 use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Factory as ClientFactory;
 
-class ClientTest extends TestCase
+class ClientTest extends WaitTestCase
 {
     /**
      * @var Client
      */
     protected $client;
 
-    /**
-     * @var LoopInterface
-     */
-    protected $loop;
 
     protected function setUp()
     {
-        $this->loop = LoopFactory::create();
+        parent::setUp();
         $this->client = ClientFactory::createClient($this->loop);
     }
 
@@ -31,9 +27,20 @@ class ClientTest extends TestCase
     public function it_stores_and_retrieves_values()
     {
         $setPromise = $this->client->set('key', 12345);
-        Block\await($setPromise, $this->loop);
+        $this->waitForPromiseResolves($setPromise);
 
         $getPromise = $this->client->get('key');
-        $this->assertEquals(12345, Block\await($getPromise, $this->loop));
+        $this->assertEquals(12345, $this->waitForPromiseResolves($getPromise));
+    }
+
+    /** @test */
+    public function it_flashes_database()
+    {
+        $this->client->set('key', 12345);
+        $this->waitForPromiseResolves($this->client->flushAll());
+
+        $getPromise = $this->client->get('key');
+
+        $this->waitForPromiseRejects($getPromise);
     }
 }
