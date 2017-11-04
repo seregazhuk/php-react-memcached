@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## v0.1.2 - 2017-11-05
+## v0.1.2 - ?
+### Added:
+ - functional tests
+
 ### Fixed:
  - connection auto-recovering
  - `createClient()` uses default Memcached address
