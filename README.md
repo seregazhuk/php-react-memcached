@@ -105,7 +105,7 @@ $factory->createClient()->then(
 
 ## Asynchronous Execution
 
-For each memcached command a client has a method. All commands are executed asynchronously. The client stored pending 
+For each Memcached command a client has a method. All commands are executed asynchronously. The client stored pending 
 requests and once it receives the response from the server, it starts resolving these requests. That means that each 
 command returns a promise. When the server executed a command and returns a response, the promise will be resolved 
 with this response. If there was an error, the promise will be rejected. 
