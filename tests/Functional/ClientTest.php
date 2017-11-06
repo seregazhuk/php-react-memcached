@@ -90,4 +90,23 @@ class ClientTest extends WaitTestCase
         $getPromise = $this->client->get('key');
         $this->assertPromiseResolvesWith('new value', $getPromise);
     }
+
+    /** @test */
+    public function it_touches_key()
+    {
+        $setPromise = $this->client->set('key', [12345], 0 , 1);
+        $this->waitForPromiseResolves($setPromise);
+        $this->waitForPromiseResolves($this->client->touch('key', 10));
+
+        $getPromise = $this->client->get('key');
+        $this->assertPromiseResolvesWith([12345], $getPromise);
+    }
+
+    /** @test */
+    public function it_retrieves_server_stats()
+    {
+        $stats = $this->waitForPromiseResolves($this->client->stats());
+        $this->assertInternalType('array', $stats);
+        $this->arrayHasKey('pid', $stats);
+    }
 }
