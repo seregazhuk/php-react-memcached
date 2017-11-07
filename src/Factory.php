@@ -5,8 +5,6 @@ namespace seregazhuk\React\Memcached;
 use React\EventLoop\LoopInterface;
 use React\Socket\Connector;
 use seregazhuk\React\Memcached\Protocol\Parser;
-use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
-use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
 
 class Factory
 {
@@ -18,15 +16,7 @@ class Factory
      */
     public static function createClient(LoopInterface $loop, $address = 'localhost:11211')
     {
-        return new Client(self::createConnection($loop, $address),  self::createProtocolParser());
-    }
-
-    /**
-     * @return Parser
-     */
-    protected static function createProtocolParser()
-    {
-        return new Parser(new RequestFactory(), new ResponseFactory());
+        return new Client(self::createConnection($loop, $address), new Parser());
     }
 
     /**
