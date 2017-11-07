@@ -4,8 +4,18 @@ namespace seregazhuk\React\Memcached\Protocol;
 
 use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
-use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
-use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
+use seregazhuk\React\Memcached\Protocol\Request\Request;
+use seregazhuk\React\Memcached\Protocol\Request\SimpleRequest;
+use seregazhuk\React\Memcached\Protocol\Request\StorageRequest;
+use seregazhuk\React\Memcached\Protocol\Response\DeleteResponse;
+use seregazhuk\React\Memcached\Protocol\Response\OkResponse;
+use seregazhuk\React\Memcached\Protocol\Response\ReadResponse;
+use seregazhuk\React\Memcached\Protocol\Response\Response;
+use seregazhuk\React\Memcached\Protocol\Response\StatsResponse;
+use seregazhuk\React\Memcached\Protocol\Response\TouchResponse;
+use seregazhuk\React\Memcached\Protocol\Response\ValueResponse;
+use seregazhuk\React\Memcached\Protocol\Response\VersionResponse;
+use seregazhuk\React\Memcached\Protocol\Response\WriteResponse;
 
 class Parser
 {
@@ -85,26 +95,6 @@ class Parser
     ];
 
     /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
-
-    /**
-     * @var ResponseFactory
-     */
-    private $responseFactory;
-
-    /**
-     * @param RequestFactory $requestFactory
-     * @param ResponseFactory $responseFactory
-     */
-    public function __construct(RequestFactory $requestFactory, ResponseFactory $responseFactory)
-    {
-        $this->requestFactory = $requestFactory;
-        $this->responseFactory = $responseFactory;
-    }
-
-    /**
      * @param string $data
      * @return array
      */
@@ -147,9 +137,7 @@ class Parser
      */
     public function makeRequest($command, array $args)
     {
-        return $this->requestFactory
-            ->create($command, $args)
-            ->getCommand();
+        return $this->createRequest($command, $args)->getCommand();
     }
 
     /**
@@ -160,8 +148,56 @@ class Parser
      */
     public function parseResponse($command, $response)
     {
-        return $this->responseFactory
-            ->makeByCommand($command, $response)
-            ->parse();
+        return $this->createResponse($command, $response)->parse();
+    }
+
+    /**
+     * @param string $command
+     * @param string $data
+     * @return Response
+     */
+    public function createResponse($command, $data)
+    {
+        switch($command) {
+            case self::COMMAND_GET:
+                return new ReadResponse($data);
+            case self::COMMAND_SET:
+            case self::COMMAND_ADD:
+            case self::COMMAND_REPLACE:
+                return new WriteResponse($data);
+            case self::COMMAND_VERSION:
+                return new VersionResponse($data);
+            case self::COMMAND_STATS:
+                return new StatsResponse($data);
+            case self::COMMAND_TOUCH:
+                return new TouchResponse($data);
+            case self::COMMAND_DELETE:
+                return new DeleteResponse($data);
+            case self::COMMAND_VERBOSITY:
+            case self::COMMAND_FLUSH_ALL:
+                return new OkResponse($data);
+            case self::COMMAND_INCREMENT:
+            case self::COMMAND_DECREMENT:
+                return new ValueResponse($data);
+        }
+    }
+
+    /**
+     * @param string $command
+     * @param array $args
+     * @return Request
+     * @throws WrongCommandException
+     */
+    public function createRequest($command, $args)
+    {
+        if(!in_array($command, self::COMMANDS)) {
+            throw new WrongCommandException("Unknown command: $command");
+        }
+
+        if(in_array($command, self::STORAGE_COMMANDS)) {
+            return new StorageRequest($command, ...$args);
+        }
+
+        return new SimpleRequest($command, $args);
     }
 }

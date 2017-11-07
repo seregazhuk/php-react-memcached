@@ -33,7 +33,7 @@ class ClientTest extends PromiseTestCase
 
     protected function setUp()
     {
-        $this->parser = Mockery::mock(Parser::class, [new RequestFactory(), new ResponseFactory()])->makePartial();
+        $this->parser = Mockery::mock(Parser::class)->makePartial();
         $this->connection = Mockery::mock(Connection::class)->shouldReceive('on')->getMock();
         $this->client = new Client($this->connection, $this->parser);
 
