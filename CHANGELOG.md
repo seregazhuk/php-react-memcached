@@ -1,15 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## v0.1.2 - ?
+## v0.1.2 - 2017-11-07
+### Added:
+ - functional tests
+
 ### Fixed:
- - handling broken connections
+ - connection auto-recovering
  - `createClient()` uses default Memcached address
  - don't allow new requests when *is ending* or *is closed*
  - write response resolving
  - wrong commands are rejected immediately
  - handle failed commands 
  - handle broken connection
+ - retrieve value after decrement
  
 ### Added:
  - client can emit events (`close`, `error`)

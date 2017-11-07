@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached\tests;
+namespace seregazhuk\React\Memcached\tests\Unit;
 
 class CallableStub
 {

@@ -5,7 +5,6 @@ namespace seregazhuk\React\Memcached;
 use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
-use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\FailedCommandException;
@@ -13,7 +12,7 @@ use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
- * @method PromiseInterface set(string $key, mixed $value)
+ * @method PromiseInterface set(string $key, mixed $value, int $flag, int $exp)
  * @method PromiseInterface version()
  * @method PromiseInterface verbosity(int $level)
  * @method PromiseInterface flushAll()
@@ -23,7 +22,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
  * @method PromiseInterface incr($key, $value)
  * @method PromiseInterface decr($key, $value)
  * @method PromiseInterface stats()
- * @method PromiseInterface touch($key)
+ * @method PromiseInterface touch($key, $exp)
  * @method PromiseInterface add($key, $value)
  */
 class Client extends EventEmitter
@@ -32,11 +31,6 @@ class Client extends EventEmitter
      * @var Parser
      */
     protected $parser;
-
-    /**
-     * @var DuplexStreamInterface
-     */
-    protected $stream;
 
     /**
      * @var Request[]
@@ -59,23 +53,36 @@ class Client extends EventEmitter
     protected $isEnding = false;
 
     /**
-     * @param DuplexStreamInterface $stream
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * @param Connection $connection
      * @param Parser $parser
      */
-    public function __construct(DuplexStreamInterface $stream, Parser $parser)
+    public function __construct(Connection $connection, Parser $parser)
     {
-        $this->stream = $stream;
         $this->parser = $parser;
+        $this->connection = $connection;
 
-        $stream->on('data', function ($chunk) {
+        $this->setConnectionHandlers();
+    }
+
+    protected function setConnectionHandlers()
+    {
+        $this->connection->on('data', function ($chunk) {
             $parsed = $this->parser->parseRawResponse($chunk);
             $this->resolveRequests($parsed);
         });
 
-        $stream->on('close', function() {
-            if(!$this->isEnding) {
+        $this->connection->on('failed', function() {
+            $this->rejectPendingRequestsWith(new ConnectionClosedException());
+        });
+
+        $this->connection->on('close', function () {
+            if (!$this->isEnding) {
                 $this->emit('error', [new ConnectionClosedException()]);
-                $this->close();
             }
         });
     }
@@ -94,7 +101,7 @@ class Client extends EventEmitter
         } else {
             try {
                 $query = $this->parser->makeRequest($name, $args);
-                $this->stream->write($query);
+                $this->connection->write($query);
                 $this->requests[] = $request;
             } catch (WrongCommandException $e) {
                 $request->reject($e);
@@ -155,14 +162,21 @@ class Client extends EventEmitter
         $this->isEnding = true;
         $this->isClosed = true;
 
-        $this->stream->close();
+        $this->connection->close();
         $this->emit('close');
 
-        // reject all pending requests
+        $this->rejectPendingRequestsWith(new ConnectionClosedException());
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    protected function rejectPendingRequestsWith(Exception $exception)
+    {
         while($this->requests) {
             $request = array_shift($this->requests);
             /* @var $request Request */
-            $request->reject(new ConnectionClosedException());
+            $request->reject($exception);
         }
     }
 }
