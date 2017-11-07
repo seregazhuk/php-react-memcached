@@ -43,7 +43,7 @@ class ClientTest extends PromiseTestCase
     /** @test */
     public function it_sends_data_to_the_connection()
     {
-        $this->parser->shouldReceive('makeRequest')->andReturn("version\n\r");
+        $this->parser->shouldReceive('makeCommand')->andReturn("version\n\r");
         $this->connection->shouldReceive('write')->with("version\n\r")->once();
         $this->client->version();
     }
@@ -58,7 +58,7 @@ class ClientTest extends PromiseTestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
+        $this->parser->shouldReceive('makeCommand')->once();
         $this->connection->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -77,7 +77,7 @@ class ClientTest extends PromiseTestCase
     /** @test */
     public function it_rejects_pending_request_when_closing()
     {
-        $this->parser->shouldReceive('makeRequest')->once();
+        $this->parser->shouldReceive('makeCommand')->once();
         $this->connection->shouldReceive('write')->once();
         $this->connection->shouldReceive('close')->once();
         $promise = $this->client->version();
@@ -90,7 +90,7 @@ class ClientTest extends PromiseTestCase
     /** @test */
     public function it_rejects_all_new_requests_when_closed()
     {
-        $this->parser->shouldNotReceive('makeRequest');
+        $this->parser->shouldNotReceive('makeCommand');
         $this->connection->shouldReceive('close')->once();
 
         $this->client->close();
@@ -101,7 +101,7 @@ class ClientTest extends PromiseTestCase
     /** @test */
     public function it_rejects_all_new_requests_when_ending()
     {
-        $this->parser->shouldNotReceive('makeRequest');
+        $this->parser->shouldNotReceive('makeCommand');
         $this->connection->shouldReceive('close')->once();
 
         $this->client->end();

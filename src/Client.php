@@ -100,7 +100,7 @@ class Client extends EventEmitter
             $request->reject(new ConnectionClosedException());
         } else {
             try {
-                $query = $this->parser->makeRequest($name, $args);
+                $query = $this->parser->makeCommand($name, $args);
                 $this->connection->write($query);
                 $this->requests[] = $request;
             } catch (WrongCommandException $e) {
