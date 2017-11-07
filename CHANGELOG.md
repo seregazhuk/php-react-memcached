@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## v0.1.2 - 2017-11-07
 ### Added:
  - functional tests
+ - client can emit events (`close`, `error`)
 
 ### Fixed:
  - connection auto-recovering
@@ -15,9 +16,6 @@ All notable changes to this project will be documented in this file.
  - handle broken connection
  - retrieve value after decrement
  
-### Added:
- - client can emit events (`close`, `error`)
-
 ## v0.1.1 - 2017-10-19
 ### Fixed:
  - autoload in composer.json
