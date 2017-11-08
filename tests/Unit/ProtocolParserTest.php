@@ -5,7 +5,6 @@ namespace seregazhuk\React\Memcached\tests\Unit;
 use PHPUnit\Framework\TestCase;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
-use seregazhuk\React\Memcached\Protocol\Request\Factory;
 use seregazhuk\React\Memcached\Protocol\Request\Request;
 use seregazhuk\React\Memcached\Protocol\Request\SimpleRequest;
 use seregazhuk\React\Memcached\Protocol\Request\StorageRequest;

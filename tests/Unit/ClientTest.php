@@ -4,15 +4,12 @@ namespace seregazhuk\React\Memcached\tests\Unit;
 
 use Mockery;
 use Mockery\MockInterface;
-use React\Stream\DuplexStreamInterface;
 use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Connection;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
-use seregazhuk\React\Memcached\Protocol\Request\Factory as RequestFactory;
-use seregazhuk\React\Memcached\Protocol\Response\Factory as ResponseFactory;
 
 class ClientTest extends PromiseTestCase
 {
