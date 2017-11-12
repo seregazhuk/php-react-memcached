@@ -34,6 +34,7 @@
     },
     "require-dev": {
         "seregazhuk/react-promise-testing": "0.*",
+        "mockery/mockery": "^1.0",
         "phpunit/phpunit": "~5.0"
     }
 }
