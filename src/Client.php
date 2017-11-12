@@ -12,7 +12,7 @@ use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 /**
- * @method PromiseInterface set(string $key, mixed $value, int $flag, int $exp)
+ * @method PromiseInterface set(string $key, mixed $value, int $flag = 0, int $exp = 0)
  * @method PromiseInterface version()
  * @method PromiseInterface verbosity(int $level)
  * @method PromiseInterface flushAll()

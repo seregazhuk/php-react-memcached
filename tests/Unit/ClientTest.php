@@ -10,8 +10,9 @@ use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
+use seregazhuk\React\PromiseTesting\TestCase;
 
-class ClientTest extends PromiseTestCase
+class ClientTest extends TestCase
 {
     /**
      * @var Parser|MockInterface
@@ -49,7 +50,7 @@ class ClientTest extends PromiseTestCase
     public function it_rejects_a_promise_when_unsupported_command_is_called()
     {
         $promise = $this->client->not_valid();
-        $this->expectPromiseRejectsWith($promise, WrongCommandException::class);
+        $this->assertPromiseRejectsWith($promise, WrongCommandException::class);
     }
 
     /** @test */
@@ -61,7 +62,7 @@ class ClientTest extends PromiseTestCase
 
         $this->client->resolveRequests(['12345']);
 
-        $this->expectPromiseResolvesWith($promise, '12345');
+        $this->assertPromiseResolvesWith($promise, '12345');
     }
 
     /** @test */
@@ -81,7 +82,7 @@ class ClientTest extends PromiseTestCase
 
         $this->client->close();
 
-        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
+        $this->assertPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
     /** @test */
@@ -92,7 +93,7 @@ class ClientTest extends PromiseTestCase
 
         $this->client->close();
         $promise = $this->client->version();
-        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
+        $this->assertPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
     /** @test */
@@ -103,15 +104,20 @@ class ClientTest extends PromiseTestCase
 
         $this->client->end();
         $promise = $this->client->version();
-        $this->expectPromiseRejectsWith($promise, ConnectionClosedException::class);
+        $this->assertPromiseRejectsWith($promise, ConnectionClosedException::class);
     }
 
 	/** @test */
 	public function it_emits_close_event_when_closing()
 	{
+	    $callbackWasCalled = false;
 		$this->connection->shouldReceive('close')->once();
 
-		$this->client->on('close', $this->expectCallableOnce());
+		$this->client->on('close', function() use (&$callbackWasCalled) {
+		    $callbackWasCalled = true;
+        });
 		$this->client->end();
+
+		$this->assertTrue($callbackWasCalled);
     }
 }
