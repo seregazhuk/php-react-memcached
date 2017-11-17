@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## v0.1.3 - 2017-11-17
+### Fixed:
+ - method type hints for IDE auto-completion
+
 ## v0.1.2 - 2017-11-07
 ### Added:
  - functional tests
