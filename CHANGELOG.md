@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## v0.1.4 - ?
+### Fixed:
+ - remove trailing slash in commands with no arguments (like `version`)
+
 ## v0.1.3 - 2017-11-17
 ### Fixed:
  - method type hints for IDE auto-completion

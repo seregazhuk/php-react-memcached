@@ -1,8 +1,8 @@
 <?php
 
 namespace seregazhuk\React\Memcached\tests\Unit;
-
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Connection;
@@ -14,10 +14,7 @@ use seregazhuk\React\PromiseTesting\TestCase;
 
 class ClientTest extends TestCase
 {
-    /**
-     * @var Parser|MockInterface
-     */
-    protected $parser;
+    use MockeryPHPUnitIntegration;
 
     /**
      * @var Client
@@ -31,9 +28,8 @@ class ClientTest extends TestCase
 
     protected function setUp()
     {
-        $this->parser = Mockery::mock(Parser::class)->makePartial();
         $this->connection = Mockery::mock(Connection::class)->shouldReceive('on')->getMock();
-        $this->client = new Client($this->connection, $this->parser);
+        $this->client = new Client($this->connection, new Parser());
 
         parent::setUp();
     }
@@ -41,8 +37,7 @@ class ClientTest extends TestCase
     /** @test */
     public function it_sends_data_to_the_connection()
     {
-        $this->parser->shouldReceive('makeCommand')->andReturn("version\n\r");
-        $this->connection->shouldReceive('write')->with("version\n\r")->once();
+        $this->connection->shouldReceive('write')->with('version' . Parser::COMMAND_SEPARATOR)->once();
         $this->client->version();
     }
 
@@ -56,7 +51,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_resolves_a_promise_with_data_from_response()
     {
-        $this->parser->shouldReceive('makeCommand')->once();
         $this->connection->shouldReceive('write')->once();
         $promise = $this->client->version();
 
@@ -75,7 +69,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_rejects_pending_request_when_closing()
     {
-        $this->parser->shouldReceive('makeCommand')->once();
         $this->connection->shouldReceive('write')->once();
         $this->connection->shouldReceive('close')->once();
         $promise = $this->client->version();
@@ -88,7 +81,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_rejects_all_new_requests_when_closed()
     {
-        $this->parser->shouldNotReceive('makeCommand');
         $this->connection->shouldReceive('close')->once();
 
         $this->client->close();
@@ -99,7 +91,6 @@ class ClientTest extends TestCase
     /** @test */
     public function it_rejects_all_new_requests_when_ending()
     {
-        $this->parser->shouldNotReceive('makeCommand');
         $this->connection->shouldReceive('close')->once();
 
         $this->client->end();
