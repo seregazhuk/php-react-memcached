@@ -52,9 +52,9 @@ class ClientTest extends TestCase
     public function it_resolves_a_promise_with_data_from_response()
     {
         $this->connection->shouldReceive('write')->once();
-        $promise = $this->client->version();
+        $promise = $this->client->iversion();
 
-        $this->client->resolveRequests(['12345']);
+        //$this->client->resolveRequests(['12345']);
 
         $this->assertPromiseResolvesWith($promise, '12345');
     }
