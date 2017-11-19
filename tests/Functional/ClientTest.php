@@ -28,6 +28,13 @@ class ClientTest extends TestCase
     }
 
     /** @test */
+    public function it_stores_and_retrieves_values_with_prefixed_keys()
+    {
+        $this->client->set('prefix:some-key', [12345]);
+        $this->assertPromiseResolvesWith($this->client->get('prefix:some-key'), [12345]);
+    }
+
+    /** @test */
     public function it_flashes_database()
     {
         $this->waitForPromiseToResolve($this->client->set('key', 12345));

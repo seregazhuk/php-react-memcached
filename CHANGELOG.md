@@ -1,9 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## v0.1.4 - ?
+## v0.1.4 - 2017-11-19
 ### Fixed:
  - remove trailing slash in commands with no arguments (like `version`)
+ - cache key parsing from read response
 
 ## v0.1.3 - 2017-11-17
 ### Fixed:
