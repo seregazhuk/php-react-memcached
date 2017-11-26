@@ -5,6 +5,7 @@
 Asynchronous Memcached PHP Client for [ReactPHP](http://reactphp.org/) ecosystem.
 
 [![Build Status](https://travis-ci.org/seregazhuk/php-react-memcached.svg?branch=master)](https://travis-ci.org/seregazhuk/php-react-memcached)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/seregazhuk/php-react-memcached/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/seregazhuk/php-react-memcached/?branch=master)
 
 **Table of Contents**
 - [Installation](#installation)
