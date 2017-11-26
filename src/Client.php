@@ -117,7 +117,7 @@ class Client extends EventEmitter
      */
     public function resolveRequests(array $responses)
     {
-        if (empty($this->requests)) {
+        if (!$this->hasPendingRequests()) {
             throw new Exception('Received unexpected response, no matching request found');
         }
 
@@ -133,7 +133,7 @@ class Client extends EventEmitter
             }
         }
 
-        if ($this->isEnding && !$this->requests) {
+        if ($this->isEnding && !$this->hasPendingRequests()) {
             $this->close();
         }
     }
@@ -145,7 +145,7 @@ class Client extends EventEmitter
     {
         $this->isEnding = true;
 
-        if (!$this->requests) {
+        if (!$this->hasPendingRequests()) {
             $this->close();
         }
     }
@@ -173,10 +173,18 @@ class Client extends EventEmitter
      */
     protected function rejectPendingRequestsWith(Exception $exception)
     {
-        while($this->requests) {
+        while($this->hasPendingRequests()) {
             $request = array_shift($this->requests);
             /* @var $request Request */
             $request->reject($exception);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasPendingRequests()
+    {
+        return !empty($this->requests);
     }
 }
