@@ -13,8 +13,8 @@ class SimpleRequest extends Request
     public function __construct($command, $args)
     {
         $command = $this->camelCaseToUnderScore($command);
-        $args = empty($args) ? '' : ' ' . implode(' ' , $args);
-        $this->command = $command . $args . Parser::COMMAND_SEPARATOR;
+        $parsedArgs = empty($args) ? '' : ' ' . implode(' ' , $args);
+        $this->command = $command . $parsedArgs . Parser::COMMAND_SEPARATOR;
     }
 
     /**

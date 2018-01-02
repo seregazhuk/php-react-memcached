@@ -39,4 +39,12 @@ class ProtocolParserTest extends TestCase
         $parser = new Parser();
         $parser->createRequest('unknown', []);
     }
+
+    /** @test */
+    public function it_throws_exception_when_parsing_response_for_unknown_command()
+    {
+        $this->expectException(WrongCommandException::class);
+        $parser = new Parser();
+        $parser->parseResponse('unknown', '');
+    }
 }

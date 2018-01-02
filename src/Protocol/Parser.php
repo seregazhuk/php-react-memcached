@@ -145,6 +145,7 @@ class Parser
      * @param string $response
      * @return string
      * @throws FailedCommandException
+     * @throws WrongCommandException
      */
     public function parseResponse($command, $response)
     {
@@ -155,6 +156,7 @@ class Parser
      * @param string $command
      * @param string $data
      * @return Response
+     * @throws WrongCommandException
      */
     public function createResponse($command, $data)
     {
@@ -180,6 +182,8 @@ class Parser
             case self::COMMAND_DECREMENT:
                 return new ValueResponse($data);
         }
+
+        throw new WrongCommandException("Cannot parse response for command $command");
     }
 
     /**

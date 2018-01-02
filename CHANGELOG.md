@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## v0.1.5 - 2018-01-03
+### Fixed:
+ - protocol parser throws `WrongCommandException` when parsing response for unknown command
+
 ## v0.1.4 - 2017-11-19
 ### Fixed:
  - remove trailing slash in commands with no arguments (like `version`)
