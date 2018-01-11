@@ -13,3 +13,11 @@ before_script:
   - composer dump-autoload
 
 script: phpunit
+
+after_script:
+  - vendor/bin/test-reporter
+
+addons:
+  code_climate:
+    repo_token:
+      secure: "EpgosoQuardUdFvubjV9CFHoURTougEAdlxGHkow4F/9Uw1eHSobqiL68Z7dB0ZC8r5xtZmWqNbYeY3RLkHPHjifl6jy9fX42/S04XjhPyoZOmdani8oBIJ30SPUOr1bR5Cp8wrxaZTVwsetjY5YW6WY1t7NfehXzaj3BEnbz+R4FDIwhUye6gmgor7EtQObEjHGXhBwGq5dl+RmU85MwfyevHsaPEWxGnmS/o9mz7j0kNwqGMgshlM8ibeqwq8kLqVR1t3ZyJT1DvdcsOcsDB7WwFLVlTUUnoZME8UVkZmGry+paPyde0vE4cv11EkBLkUafwDHx8JRTxsaXy4kSvAOz8aVRkrR+KDAhwJTDCOTiHspKi3M4phE4A5QVQf+OINGfAPZrw4liIoFY2VIJf2cfmSkCg3zBej/UboL+Q7UZ2CuRt/NF6c0D4XQ0K0srJfcr8RyFILQY3ZUs0HjytMpbDPfMugOKCuT+JbPcof5xruZhNsyT+p2/V3dNNJSY/kFQ6VkQmZ62Yo4ZP/t8UWz/l5DfVbPG0B7lJfTIJmnz8xcJ5wlPRKZj0A1vcfrWPjO56ezi7nJur6R0jDpYOa6/55QGenS5v0z/vbrbY3In/4U0VLDZt11tPldkbPXjp3giqaVkipBPu15mM4ctsBPI0vpoC8UV53PP41uotw="
