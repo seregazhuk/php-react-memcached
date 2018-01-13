@@ -76,7 +76,7 @@ class Client extends EventEmitter
             $this->resolveRequests($parsed);
         });
 
-        $this->connection->on('failed', function() {
+        $this->connection->on('failed', function () {
             $this->rejectPendingRequestsWith(new ConnectionClosedException());
         });
 
