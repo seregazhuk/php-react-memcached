@@ -74,7 +74,7 @@ class Connection extends EventEmitter
 
         $stream->on('close', [$this, 'close']);
 
-        while($this->queries) {
+        while ($this->queries) {
             $this->stream->write(array_shift($this->queries));
         }
     }
@@ -87,7 +87,7 @@ class Connection extends EventEmitter
 
     public function close()
     {
-        if($this->stream) {
+        if ($this->stream) {
             $this->stream->close();
         }
 
@@ -100,13 +100,13 @@ class Connection extends EventEmitter
      */
     public function write($query)
     {
-        if($this->stream && $this->stream->isWritable()) {
+        if ($this->stream && $this->stream->isWritable()) {
             $this->stream->write($query);
             return;
         }
 
         $this->queries[] = $query;
-        if(!$this->isConnecting) {
+        if (!$this->isConnecting) {
             $this->connect();
         }
     }

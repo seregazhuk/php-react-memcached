@@ -16,7 +16,7 @@ class ReadResponse extends Response
 
         $value = isset($match[1]) ? trim($match[1]) : null;
 
-        if(null === $value) {
+        if (null === $value) {
             $this->fail();
         }
 

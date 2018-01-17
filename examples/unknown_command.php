@@ -9,7 +9,7 @@ $client = Factory::createClient($loop);
 
 $client
     ->someCommand()
-    ->then('var_dump', function(Exception $e){
+    ->then('var_dump', function (Exception $e) {
         echo $e->getMessage();
     });
 
