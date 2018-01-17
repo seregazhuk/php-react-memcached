@@ -9,7 +9,7 @@ $client = Factory::createClient($loop);
 
 $client
     ->touch('some_key', 12)
-    ->then('var_dump', function(Exception $e){
+    ->then('var_dump', function (Exception $e) {
         echo 'Error: ' . $e->getMessage();
     });
 

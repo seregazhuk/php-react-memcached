@@ -13,7 +13,7 @@ class DeleteResponse extends Response
      */
     public function parse()
     {
-        if(trim($this->data) !== Parser::RESPONSE_DELETED) {
+        if (trim($this->data) !== Parser::RESPONSE_DELETED) {
             $this->fail();
         }
 

@@ -12,7 +12,7 @@ $client = Factory::createClient($loop);
 //    echo "The value was stored\n";
 //});
 $client->set('var', 2);
-$client->incr('var', 2)->then(function($data){
+$client->incr('var', 2)->then(function ($data) {
     var_dump($data);
 });
 

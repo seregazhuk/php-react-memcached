@@ -32,7 +32,7 @@ class Parser
     const RESPONSE_VALUE = 'VALUE';
     const RESPONSE_TOUCHED = 'TOUCHED';
 
-    CONST RESPONSE_ENDS = [
+    const RESPONSE_ENDS = [
         self::RESPONSE_END,
         self::RESPONSE_DELETED,
         self::RESPONSE_NOT_FOUND,
@@ -114,7 +114,7 @@ class Parser
                 $result = '';
             }
 
-            if(strpos($line, self::RESPONSE_VERSION) !== false) {
+            if (strpos($line, self::RESPONSE_VERSION) !== false) {
                 $results[] = $line;
                 $result = '';
             }
@@ -122,7 +122,7 @@ class Parser
             $result .= self::COMMAND_SEPARATOR;
         }
 
-        if(!empty($result) && $result !== self::COMMAND_SEPARATOR) {
+        if (!empty($result) && $result !== self::COMMAND_SEPARATOR) {
             $results[] = $result;
         }
 
@@ -160,7 +160,7 @@ class Parser
      */
     public function createResponse($command, $data)
     {
-        switch($command) {
+        switch ($command) {
             case self::COMMAND_GET:
                 return new ReadResponse($data);
             case self::COMMAND_SET:
@@ -194,11 +194,11 @@ class Parser
      */
     public function createRequest($command, $args)
     {
-        if(!in_array($command, self::COMMANDS)) {
+        if (!in_array($command, self::COMMANDS)) {
             throw new WrongCommandException("Unknown command: $command");
         }
 
-        if(in_array($command, self::STORAGE_COMMANDS)) {
+        if (in_array($command, self::STORAGE_COMMANDS)) {
             return new StorageRequest($command, ...$args);
         }
 
