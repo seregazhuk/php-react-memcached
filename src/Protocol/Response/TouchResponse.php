@@ -13,7 +13,7 @@ class TouchResponse extends Response
      */
     public function parse()
     {
-        if(trim($this->data) !== Parser::RESPONSE_TOUCHED) {
+        if (trim($this->data) !== Parser::RESPONSE_TOUCHED) {
             $this->fail();
         }
 

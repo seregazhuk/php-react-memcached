@@ -12,7 +12,8 @@ abstract class Request
     /**
      * @return string
      */
-    public function getCommand() {
+    public function getCommand()
+    {
         return $this->command;
     }
 }

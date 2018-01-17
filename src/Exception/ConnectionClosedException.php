@@ -10,5 +10,4 @@ class ConnectionClosedException extends Exception
     {
         parent::__construct('Connection closed', $code, $previous);
     }
-
 }

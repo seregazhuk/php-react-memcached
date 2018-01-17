@@ -16,7 +16,7 @@ class StatsResponse extends Response
 
         foreach ($lines as $line) {
             preg_match('/STAT (\w+) (\w+)/', $line, $matches);
-            if(empty($matches)) {
+            if (empty($matches)) {
                 break;
             }
 
