@@ -56,7 +56,7 @@ class ClientTest extends TestCase
 
         $this->client->resolveRequests(['12345']);
 
-        $this->assertPromiseResolvesWith($promise, '12345');
+        $this->assertPromiseFulfillsWith($promise, '12345');
     }
 
     /** @test */

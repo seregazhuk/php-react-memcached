@@ -24,21 +24,21 @@ class ClientTest extends TestCase
     public function it_stores_and_retrieves_values()
     {
         $this->client->set('key', [12345]);
-        $this->assertPromiseResolvesWith($this->client->get('key'), [12345]);
+        $this->assertPromiseFulfillsWith($this->client->get('key'), [12345]);
     }
 
     /** @test */
     public function it_stores_and_retrieves_values_with_prefixed_keys()
     {
         $this->client->set('prefix:some-key', [12345]);
-        $this->assertPromiseResolvesWith($this->client->get('prefix:some-key'), [12345]);
+        $this->assertPromiseFulfillsWith($this->client->get('prefix:some-key'), [12345]);
     }
 
     /** @test */
     public function it_flashes_database()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', 12345));
-        $this->waitForPromiseToResolve($this->client->flushAll());
+        $this->waitForPromiseToFulfill($this->client->set('key', 12345));
+        $this->waitForPromiseToFulfill($this->client->flushAll());
 
         $this->assertPromiseRejects($this->client->get('key'));
     }
@@ -46,19 +46,19 @@ class ClientTest extends TestCase
     /** @test */
     public function it_increments_value()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', 11));
-        $this->waitForPromiseToResolve($this->client->incr('key', 1));
+        $this->waitForPromiseToFulfill($this->client->set('key', 11));
+        $this->waitForPromiseToFulfill($this->client->incr('key', 1));
 
-        $this->assertPromiseResolvesWith($this->client->get('key'), 12);
+        $this->assertPromiseFulfillsWith($this->client->get('key'), 12);
     }
 
     /** @test */
     public function it_decrements_value()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', 10));
-        $this->waitForPromiseToResolve($this->client->decr('key', 1));
+        $this->waitForPromiseToFulfill($this->client->set('key', 10));
+        $this->waitForPromiseToFulfill($this->client->decr('key', 1));
 
-        $this->assertPromiseResolvesWith($this->client->get('key'), 9);
+        $this->assertPromiseFulfillsWith($this->client->get('key'), 9);
     }
 
     /** @test */
@@ -74,8 +74,8 @@ class ClientTest extends TestCase
     /** @test */
     public function it_deletes_key()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', [12345], 0 , 1));
-        $this->waitForPromiseToResolve($this->client->delete('key'));
+        $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
+        $this->waitForPromiseToFulfill($this->client->delete('key'));
 
         $this->assertPromiseRejects($this->client->get('key'));
     }
@@ -83,20 +83,20 @@ class ClientTest extends TestCase
     /** @test */
     public function it_replaces_value()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', [12345], 0 , 1));
-        $this->waitForPromiseToResolve($this->client->replace('key', 'new value'));
+        $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
+        $this->waitForPromiseToFulfill($this->client->replace('key', 'new value'));
 
-        $this->assertPromiseResolvesWith($this->client->get('key'), 'new value');
+        $this->assertPromiseFulfillsWith($this->client->get('key'), 'new value');
     }
 
     /** @test */
     public function it_touches_key()
     {
-        $this->waitForPromiseToResolve($this->client->set('key', [12345], 0 , 1));
-        $this->waitForPromiseToResolve($this->client->touch('key', 10));
+        $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
+        $this->waitForPromiseToFulfill($this->client->touch('key', 10));
 
         $getPromise = $this->client->get('key');
-        $this->assertPromiseResolvesWith($getPromise, [12345]);
+        $this->assertPromiseFulfillsWith($getPromise, [12345]);
     }
 
     /** @test */
