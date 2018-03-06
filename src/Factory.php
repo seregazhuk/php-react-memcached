@@ -22,7 +22,7 @@ class Factory
 
     /**
      * @param LoopInterface $loop
-     * @param $address
+     * @param string $address
      * @return Connection
      */
     protected static function createConnection(LoopInterface $loop, $address)
