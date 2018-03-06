@@ -7,7 +7,6 @@ use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
-use seregazhuk\React\Memcached\Exception\FailedCommandException;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
@@ -33,9 +32,9 @@ class Client extends EventEmitter
     protected $parser;
 
     /**
-     * @var Request[]
+     * @var RequestsPool
      */
-    protected $requests = [];
+    protected $pool;
 
     /**
      * Indicates that the connection is closed.
@@ -65,6 +64,7 @@ class Client extends EventEmitter
     {
         $this->parser = $parser;
         $this->connection = $connection;
+        $this->pool = new RequestsPool();
 
         $this->setConnectionHandlers();
     }
@@ -77,7 +77,7 @@ class Client extends EventEmitter
         });
 
         $this->connection->on('failed', function () {
-            $this->rejectPendingRequestsWith(new ConnectionClosedException());
+            $this->pool->rejectAllWith(new ConnectionClosedException());
         });
 
         $this->connection->on('close', function () {
@@ -100,9 +100,9 @@ class Client extends EventEmitter
             $request->reject(new ConnectionClosedException());
         } else {
             try {
-                $query = $this->parser->makeCommand($name, $args);
+                $query = $this->parser->makeQuery($name, $args);
                 $this->connection->write($query);
-                $this->requests[] = $request;
+                $this->pool->add($request);
             } catch (WrongCommandException $e) {
                 $request->reject($e);
             }
@@ -117,23 +117,22 @@ class Client extends EventEmitter
      */
     public function resolveRequests(array $responses)
     {
-        if (!$this->hasPendingRequests()) {
+        if ($this->pool->isEmpty()) {
             throw new Exception('Received unexpected response, no matching request found');
         }
 
         foreach ($responses as $response) {
-            /* @var $request Request */
-            $request = array_shift($this->requests);
+            $request = $this->pool->shift();
 
             try {
                 $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
                 $request->resolve($parsedResponse);
-            } catch (FailedCommandException $exception) {
+            } catch (WrongCommandException $exception) {
                 $request->reject($exception);
             }
         }
 
-        if ($this->isEnding && !$this->hasPendingRequests()) {
+        if ($this->isEnding && $this->pool->isEmpty()) {
             $this->close();
         }
     }
@@ -145,7 +144,7 @@ class Client extends EventEmitter
     {
         $this->isEnding = true;
 
-        if (!$this->hasPendingRequests()) {
+        if ($this->pool->isEmpty()) {
             $this->close();
         }
     }
@@ -165,26 +164,6 @@ class Client extends EventEmitter
         $this->connection->close();
         $this->emit('close');
 
-        $this->rejectPendingRequestsWith(new ConnectionClosedException());
-    }
-
-    /**
-     * @param Exception $exception
-     */
-    protected function rejectPendingRequestsWith(Exception $exception)
-    {
-        while ($this->hasPendingRequests()) {
-            $request = array_shift($this->requests);
-            /* @var $request Request */
-            $request->reject($exception);
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function hasPendingRequests()
-    {
-        return !empty($this->requests);
+        $this->pool->rejectAllWith(new ConnectionClosedException());
     }
 }
