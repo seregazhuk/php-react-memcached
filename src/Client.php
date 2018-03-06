@@ -80,7 +80,7 @@ class Client extends EventEmitter
         });
 
         $this->connection->on('failed', function () {
-            $this->pool->rejectAllWith(new ConnectionClosedException());
+            $this->pool->rejectAll(new ConnectionClosedException());
         });
 
         $this->connection->on('close', function () {
@@ -115,7 +115,7 @@ class Client extends EventEmitter
     }
 
     /**
-     * @param array $responses
+     * @param string[] $responses
      * @throws Exception
      */
     public function resolveRequests(array $responses)
@@ -167,6 +167,6 @@ class Client extends EventEmitter
         $this->connection->close();
         $this->emit('close');
 
-        $this->pool->rejectAllWith(new ConnectionClosedException());
+        $this->pool->rejectAll(new ConnectionClosedException());
     }
 }

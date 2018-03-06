@@ -30,7 +30,7 @@ class RequestsPool
     /**
      * @param Exception $exception
      */
-    public function rejectAllWith(Exception $exception)
+    public function rejectAll(Exception $exception)
     {
         while (!$this->isEmpty()) {
             $request = $this->shift();

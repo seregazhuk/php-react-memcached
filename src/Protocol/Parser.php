@@ -96,7 +96,7 @@ class Parser
 
     /**
      * @param string $data
-     * @return array
+     * @return string[]
      */
     public function parseRawResponse($data = '')
     {
