@@ -4,6 +4,7 @@ namespace seregazhuk\React\Memcached;
 
 use React\EventLoop\LoopInterface;
 use React\Socket\Connector;
+use seregazhuk\React\Memcached\Connection\Connection;
 use seregazhuk\React\Memcached\Protocol\Parser;
 
 class Factory

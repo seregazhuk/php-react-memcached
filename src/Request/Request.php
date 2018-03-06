@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Request;
 
 use Exception;
 use React\Promise\Deferred;
@@ -31,7 +31,7 @@ class Request
     /**
      * @return string
      */
-    public function getCommand()
+    public function command()
     {
         return $this->command;
     }
@@ -39,7 +39,7 @@ class Request
     /**
      * @return Promise|PromiseInterface
      */
-    public function getPromise()
+    public function promise()
     {
         return $this->deferred->promise();
     }

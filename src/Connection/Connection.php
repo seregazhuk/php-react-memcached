@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Connection;
 
 use Evenement\EventEmitter;
 use React\Promise\PromiseInterface;

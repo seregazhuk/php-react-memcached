@@ -5,10 +5,13 @@ namespace seregazhuk\React\Memcached;
 use Evenement\EventEmitter;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
+use seregazhuk\React\Memcached\Connection\Connection;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
+use seregazhuk\React\Memcached\Request\Request;
+use seregazhuk\React\Memcached\Request\RequestsPool;
 
 /**
  * @method PromiseInterface set(string $key, mixed $value, int $flag = 0, int $exp = 0)
@@ -108,7 +111,7 @@ class Client extends EventEmitter
             }
         }
 
-        return $request->getPromise();
+        return $request->promise();
     }
 
     /**
@@ -125,7 +128,7 @@ class Client extends EventEmitter
             $request = $this->pool->shift();
 
             try {
-                $parsedResponse = $this->parser->parseResponse($request->getCommand(), $response);
+                $parsedResponse = $this->parser->parseResponse($request->command(), $response);
                 $request->resolve($parsedResponse);
             } catch (WrongCommandException $exception) {
                 $request->reject($exception);

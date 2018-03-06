@@ -5,7 +5,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use seregazhuk\React\Memcached\Client;
-use seregazhuk\React\Memcached\Connection;
+use seregazhuk\React\Memcached\Connection\Connection;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;

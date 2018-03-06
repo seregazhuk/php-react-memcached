@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Request;
 
 use seregazhuk\React\Memcached\Exception\Exception;
 
@@ -9,7 +9,7 @@ class RequestsPool
     /**
      * @var Request[]
      */
-    protected $requests = [];
+    private $requests = [];
 
     /**
      * @param Request $request
