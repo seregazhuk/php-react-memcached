@@ -12,7 +12,7 @@ abstract class Request
     /**
      * @return string
      */
-    public function getCommand()
+    public function command()
     {
         return $this->command;
     }

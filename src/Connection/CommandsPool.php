@@ -2,24 +2,24 @@
 
 namespace seregazhuk\React\Memcached\Connection;
 
-class QueriesPool
+class CommandsPool
 {
     /**
      * @var string[]
      */
-    protected $queries = [];
+    protected $commands = [];
 
     /**
-     * @param string $query
+     * @param string $command
      */
-    public function add($query)
+    public function add($command)
     {
-        $this->queries[] = $query;
+        $this->commands[] = $command;
     }
 
     public function clear()
     {
-        $this->queries = [];
+        $this->commands = [];
     }
 
     /**
@@ -27,6 +27,6 @@ class QueriesPool
      */
     public function shift()
     {
-        return array_shift($this->queries);
+        return array_shift($this->commands);
     }
 }

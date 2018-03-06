@@ -31,9 +31,9 @@ class Connection extends EventEmitter
     protected $isConnecting = false;
 
     /**
-     * @var QueriesPool
+     * @var CommandsPool
      */
-    protected $queriesPool;
+    protected $commandsPool;
 
     /**
      * @param string $address
@@ -43,7 +43,7 @@ class Connection extends EventEmitter
     {
         $this->address = $address;
         $this->connector = $connector;
-        $this->queriesPool = new QueriesPool();
+        $this->commandsPool = new CommandsPool();
     }
 
     /**
@@ -75,8 +75,8 @@ class Connection extends EventEmitter
 
         $stream->on('close', [$this, 'close']);
 
-        while ($query = $this->queriesPool->shift()) {
-            $this->stream->write($query);
+        while ($command = $this->commandsPool->shift()) {
+            $this->stream->write($command);
         }
     }
 
@@ -97,16 +97,16 @@ class Connection extends EventEmitter
     }
 
     /**
-     * @param string $query
+     * @param string $command
      */
-    public function write($query)
+    public function write($command)
     {
         if ($this->stream && $this->stream->isWritable()) {
-            $this->stream->write($query);
+            $this->stream->write($command);
             return;
         }
 
-        $this->queriesPool->add($query);
+        $this->commandsPool->add($command);
         if (!$this->isConnecting) {
             $this->connect();
         }
@@ -115,6 +115,6 @@ class Connection extends EventEmitter
     private function cancelConnecting()
     {
         $this->isConnecting = false;
-        $this->queriesPool->clear();
+        $this->commandsPool->clear();
     }
 }

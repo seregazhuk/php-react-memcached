@@ -135,9 +135,9 @@ class Parser
      * @return string
      * @throws WrongCommandException
      */
-    public function makeQuery($command, array $args)
+    public function makeCommand($command, array $args)
     {
-        return $this->createRequest($command, $args)->getCommand();
+        return $this->createRequest($command, $args)->command();
     }
 
     /**
