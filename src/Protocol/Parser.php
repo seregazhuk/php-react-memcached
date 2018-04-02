@@ -145,6 +145,7 @@ class Parser
      * @param string $response
      * @return string
      * @throws WrongCommandException
+     * @throws FailedCommandException
      */
     public function parseResponse($command, $response)
     {

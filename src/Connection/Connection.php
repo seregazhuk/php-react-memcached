@@ -13,27 +13,27 @@ class Connection extends EventEmitter
     /**
      * @var DuplexStreamInterface
      */
-    protected $stream;
+    private $stream;
 
     /**
      * @var string
      */
-    protected $address;
+    private $address;
 
     /**
      * @var ConnectorInterface
      */
-    protected $connector;
+    private $connector;
 
     /**
      * @var bool
      */
-    protected $isConnecting = false;
+    private $isConnecting = false;
 
     /**
      * @var CommandsPool
      */
-    protected $commandsPool;
+    private $commandsPool;
 
     /**
      * @param string $address

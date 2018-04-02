@@ -7,7 +7,7 @@ class CommandsPool
     /**
      * @var string[]
      */
-    protected $commands = [];
+    private $commands = [];
 
     /**
      * @param string $command

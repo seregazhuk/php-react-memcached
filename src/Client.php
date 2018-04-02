@@ -32,19 +32,19 @@ class Client extends EventEmitter
     /**
      * @var Parser
      */
-    protected $parser;
+    private $parser;
 
     /**
      * @var RequestsPool
      */
-    protected $pool;
+    private $pool;
 
     /**
      * Indicates that the connection is closed.
      *
      * @var bool
      */
-    protected $isClosed = false;
+    private $isClosed = false;
 
     /**
      * Indicates that we don't accept new requests but we are still waiting for
@@ -52,12 +52,12 @@ class Client extends EventEmitter
      *
      * @var bool
      */
-    protected $isEnding = false;
+    private $isEnding = false;
 
     /**
      * @var Connection
      */
-    protected $connection;
+    private $connection;
 
     /**
      * @param Connection $connection
