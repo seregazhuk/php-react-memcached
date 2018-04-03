@@ -17,16 +17,8 @@ class Factory
      */
     public static function createClient(LoopInterface $loop, $address = 'localhost:11211')
     {
-        return new Client(self::createConnection($loop, $address), new Parser());
-    }
+        $connection = new Connection($address, new Connector($loop));
 
-    /**
-     * @param LoopInterface $loop
-     * @param string $address
-     * @return Connection
-     */
-    protected static function createConnection(LoopInterface $loop, $address)
-    {
-        return new Connection($address, new Connector($loop));
+        return new Client($connection, new Parser());
     }
 }
