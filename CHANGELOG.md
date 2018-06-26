@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## v0.2.0 - 2018-06-26
+### Updated:
+  - required php version changed to 7.2
+
 ## v0.1.6 - 2018-06-26
 ### Fixed:
  - updated composer dependencies
