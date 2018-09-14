@@ -4,33 +4,24 @@ namespace seregazhuk\React\Memcached\Request;
 
 use seregazhuk\React\Memcached\Exception\Exception;
 
-class RequestsPool
+final class RequestsPool
 {
     /**
      * @var Request[]
      */
     private $requests = [];
 
-    /**
-     * @param Request $request
-     */
-    public function add(Request $request)
+    public function add(Request $request): void
     {
         $this->requests[] = $request;
     }
 
-    /**
-     * @return Request
-     */
-    public function shift()
+    public function shift(): Request
     {
         return array_shift($this->requests);
     }
 
-    /**
-     * @param Exception $exception
-     */
-    public function rejectAll(Exception $exception)
+    public function rejectAll(Exception $exception): void
     {
         while (!$this->isEmpty()) {
             $request = $this->shift();
@@ -38,10 +29,7 @@ class RequestsPool
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->requests);
     }

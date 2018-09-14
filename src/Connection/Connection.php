@@ -8,48 +8,29 @@ use React\Socket\ConnectionInterface;
 use React\Socket\ConnectorInterface;
 use React\Stream\DuplexStreamInterface;
 
-class Connection extends EventEmitter
+final class Connection extends EventEmitter
 {
     /**
      * @var DuplexStreamInterface
      */
     private $stream;
 
-    /**
-     * @var string
-     */
     private $address;
 
-    /**
-     * @var ConnectorInterface
-     */
     private $connector;
 
-    /**
-     * @var bool
-     */
     private $isConnecting = false;
 
-    /**
-     * @var CommandsPool
-     */
     private $commandsPool;
 
-    /**
-     * @param string $address
-     * @param ConnectorInterface $connector
-     */
-    public function __construct($address, ConnectorInterface $connector)
+    public function __construct(string $address, ConnectorInterface $connector)
     {
         $this->address = $address;
         $this->connector = $connector;
         $this->commandsPool = new CommandsPool();
     }
 
-    /**
-     * @return PromiseInterface
-     */
-    public function connect()
+    public function connect(): PromiseInterface
     {
         $this->isConnecting = true;
 
@@ -61,10 +42,7 @@ class Connection extends EventEmitter
             );
     }
 
-    /**
-     * @param ConnectionInterface $stream
-     */
-    public function onConnected(ConnectionInterface $stream)
+    public function onConnected(ConnectionInterface $stream): void
     {
         $this->stream = $stream;
         $this->isConnecting = false;
@@ -80,13 +58,13 @@ class Connection extends EventEmitter
         }
     }
 
-    public function onFailed()
+    public function onFailed(): void
     {
         $this->cancelConnecting();
         $this->emit('failed');
     }
 
-    public function close()
+    public function close(): void
     {
         if ($this->stream) {
             $this->stream->close();
@@ -96,10 +74,7 @@ class Connection extends EventEmitter
         $this->emit('close');
     }
 
-    /**
-     * @param string $command
-     */
-    public function write($command)
+    public function write(string $command): void
     {
         if ($this->stream && $this->stream->isWritable()) {
             $this->stream->write($command);
@@ -112,7 +87,7 @@ class Connection extends EventEmitter
         }
     }
 
-    private function cancelConnecting()
+    private function cancelConnecting(): void
     {
         $this->isConnecting = false;
         $this->commandsPool->clear();

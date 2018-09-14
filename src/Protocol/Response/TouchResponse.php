@@ -8,8 +8,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
 class TouchResponse extends Response
 {
     /**
-     * @return bool
-     * @throws FailedCommandException
+     * {@inheritdoc}
      */
     public function parse()
     {

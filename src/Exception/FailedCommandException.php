@@ -2,6 +2,6 @@
 
 namespace seregazhuk\React\Memcached\Exception;
 
-class FailedCommandException extends CommandException
+final class FailedCommandException extends CommandException
 {
 }

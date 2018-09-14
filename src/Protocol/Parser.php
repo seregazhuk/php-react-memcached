@@ -17,22 +17,22 @@ use seregazhuk\React\Memcached\Protocol\Response\ValueResponse;
 use seregazhuk\React\Memcached\Protocol\Response\VersionResponse;
 use seregazhuk\React\Memcached\Protocol\Response\WriteResponse;
 
-class Parser
+final class Parser
 {
-    const RESPONSE_END = 'END';
-    const RESPONSE_STORED = 'STORED';
-    const RESPONSE_NOT_STORED = 'NOT_STORED';
-    const RESPONSE_DELETED = 'DELETED';
-    const RESPONSE_NOT_FOUND = 'NOT_FOUND';
-    const RESPONSE_OK = 'OK';
-    const RESPONSE_EXISTS = 'EXISTS';
-    const RESPONSE_ERROR = 'ERROR';
-    const RESPONSE_RESET = 'RESET';
-    const RESPONSE_VERSION = 'VERSION';
-    const RESPONSE_VALUE = 'VALUE';
-    const RESPONSE_TOUCHED = 'TOUCHED';
+    public const RESPONSE_STORED = 'STORED';
+    public const RESPONSE_DELETED = 'DELETED';
+    public const RESPONSE_NOT_FOUND = 'NOT_FOUND';
+    public const RESPONSE_OK = 'OK';
+    public const RESPONSE_VERSION = 'VERSION';
 
-    const RESPONSE_ENDS = [
+    private const RESPONSE_NOT_STORED = 'NOT_STORED';
+    private const RESPONSE_END = 'END';
+    private const RESPONSE_EXISTS = 'EXISTS';
+    public const RESPONSE_TOUCHED = 'TOUCHED';
+    private const RESPONSE_ERROR = 'ERROR';
+    private const RESPONSE_RESET = 'RESET';
+
+    private const RESPONSE_ENDS = [
         self::RESPONSE_END,
         self::RESPONSE_DELETED,
         self::RESPONSE_NOT_FOUND,
@@ -45,60 +45,49 @@ class Parser
         self::RESPONSE_TOUCHED,
     ];
 
-    const COMMAND_SET = 'set';
+    private const COMMAND_SET = 'set';
 
-    const COMMAND_SEPARATOR = "\r\n";
+    public const COMMAND_SEPARATOR = "\r\n";
 
-    const STORAGE_COMMANDS = [
+    private const STORAGE_COMMANDS = [
         self::COMMAND_SET,
         self::COMMAND_ADD,
         self::COMMAND_REPLACE,
     ];
 
-    const COMMAND_GET = 'get';
+    private const COMMAND_GET = 'get';
 
-    const RETRIEVAL_COMMANDS = [
-        self::COMMAND_GET,
-    ];
+    private const COMMAND_VERSION = 'version';
+    private const COMMAND_STATS = 'stats';
+    private const COMMAND_TOUCH = 'touch';
+    private const COMMAND_DELETE = 'delete';
+    private const COMMAND_INCREMENT = 'incr';
+    private const COMMAND_DECREMENT = 'decr';
+    private const COMMAND_ADD = 'add';
+    private const COMMAND_REPLACE = 'replace';
+    private const COMMAND_VERBOSITY = 'verbosity';
+    private const COMMAND_FLUSH_ALL = 'flushAll';
 
-    const WRITE_RESPONSE_ENDS = [
-        self::RESPONSE_STORED,
-        self::RESPONSE_NOT_STORED,
-        self::RESPONSE_EXISTS,
-        self::RESPONSE_NOT_FOUND,
-    ];
-
-    const COMMAND_VERSION = 'version';
-    const COMMAND_STATS = 'stats';
-    const COMMAND_TOUCH = 'touch';
-    const COMMAND_DELETE = 'delete';
-    const COMMAND_INCREMENT = 'incr';
-    const COMMAND_DECREMENT = 'decr';
-    const COMMAND_ADD = 'add';
-    const COMMAND_REPLACE = 'replace';
-    const COMMAND_VERBOSITY = 'verbosity';
-    const COMMAND_FLUSH_ALL = 'flushAll';
-
-    const COMMANDS = [
-        self::COMMAND_ADD,
-        self::COMMAND_DECREMENT,
-        self::COMMAND_DELETE,
-        self::COMMAND_FLUSH_ALL,
-        self::COMMAND_GET,
-        self::COMMAND_INCREMENT,
-        self::COMMAND_REPLACE,
-        self::COMMAND_SET,
-        self::COMMAND_STATS,
-        self::COMMAND_TOUCH,
-        self::COMMAND_VERBOSITY,
-        self::COMMAND_VERSION,
-    ];
+    private const COMMANDS = [
+            self::COMMAND_ADD,
+            self::COMMAND_DECREMENT,
+            self::COMMAND_DELETE,
+            self::COMMAND_FLUSH_ALL,
+            self::COMMAND_GET,
+            self::COMMAND_INCREMENT,
+            self::COMMAND_REPLACE,
+            self::COMMAND_SET,
+            self::COMMAND_STATS,
+            self::COMMAND_TOUCH,
+            self::COMMAND_VERBOSITY,
+            self::COMMAND_VERSION,
+        ];
 
     /**
      * @param string $data
      * @return string[]
      */
-    public function parseRawResponse($data = '')
+    public function parseRawResponse(string $data = ''): array
     {
         $data = substr($data, 0, strlen($data) - strlen(self::COMMAND_SEPARATOR));
         $lines = explode(self::COMMAND_SEPARATOR, $data);

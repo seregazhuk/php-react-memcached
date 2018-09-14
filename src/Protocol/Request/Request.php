@@ -9,10 +9,7 @@ abstract class Request
      */
     protected $command;
 
-    /**
-     * @return string
-     */
-    public function command()
+    public function command(): string
     {
         return $this->command;
     }
