@@ -72,7 +72,7 @@ class Client extends EventEmitter
         $this->setConnectionHandlers();
     }
 
-    protected function setConnectionHandlers()
+    protected function setConnectionHandlers(): void
     {
         $this->connection->on('data', function ($chunk) {
             $parsed = $this->parser->parseRawResponse($chunk);
@@ -95,7 +95,7 @@ class Client extends EventEmitter
      * @param array $args
      * @return Promise|PromiseInterface
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args)
     {
         $request = new Request($name);
 
@@ -118,7 +118,7 @@ class Client extends EventEmitter
      * @param string[] $responses
      * @throws Exception
      */
-    public function resolveRequests(array $responses)
+    public function resolveRequests(array $responses): void
     {
         if ($this->pool->isEmpty()) {
             throw new Exception('Received unexpected response, no matching request found');
@@ -143,7 +143,7 @@ class Client extends EventEmitter
     /**
      * Closes the connection when all requests are resolved
      */
-    public function end()
+    public function end(): void
     {
         $this->isEnding = true;
 
@@ -155,7 +155,7 @@ class Client extends EventEmitter
     /**
      * Forces closing the connection and rejects all pending requests
      */
-    public function close()
+    public function close(): void
     {
         if ($this->isClosed) {
             return;

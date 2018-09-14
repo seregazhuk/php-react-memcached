@@ -2,30 +2,24 @@
 
 namespace seregazhuk\React\Memcached\Connection;
 
-class CommandsPool
+final class CommandsPool
 {
     /**
      * @var string[]
      */
     private $commands = [];
 
-    /**
-     * @param string $command
-     */
-    public function add($command)
+    public function add(string $command): void
     {
         $this->commands[] = $command;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->commands = [];
     }
 
-    /**
-     * @return string
-     */
-    public function shift()
+    public function shift(): string
     {
         return array_shift($this->commands);
     }

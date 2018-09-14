@@ -2,6 +2,8 @@
 
 namespace seregazhuk\React\Memcached\Exception;
 
-class Exception extends \Exception
+use Exception as BaseException;
+
+class Exception extends BaseException
 {
 }

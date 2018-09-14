@@ -7,7 +7,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
 class VersionResponse extends Response
 {
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function parse()
     {

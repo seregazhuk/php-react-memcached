@@ -28,7 +28,7 @@ abstract class Response
     /**
      * @throws FailedCommandException
      */
-    protected function fail()
+    protected function fail(): void
     {
         throw new FailedCommandException($this->data);
     }

@@ -8,8 +8,7 @@ use seregazhuk\React\Memcached\Protocol\Parser;
 class ValueResponse extends Response
 {
     /**
-     * @return string
-     * @throws FailedCommandException
+     * {@inheritdoc}
      */
     public function parse()
     {
