@@ -1,28 +1,32 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## v0.2.0 - 2018-06-26
+## 0.2.1 - 2018-09-14
+### Update:
+ - Move to final classes and type-hints
+
+## 0.2.0 - 2018-06-26
 ### Updated:
   - required php version changed to 7.2
 
-## v0.1.6 - 2018-06-26
+## 0.1.6 - 2018-06-26
 ### Fixed:
  - updated composer dependencies
 
-## v0.1.5 - 2018-01-03
+## 0.1.5 - 2018-01-03
 ### Fixed:
  - protocol parser throws `WrongCommandException` when parsing response for unknown command
 
-## v0.1.4 - 2017-11-19
+## 0.1.4 - 2017-11-19
 ### Fixed:
  - remove trailing slash in commands with no arguments (like `version`)
  - cache key parsing from read response
 
-## v0.1.3 - 2017-11-17
+## 0.1.3 - 2017-11-17
 ### Fixed:
  - method type hints for IDE auto-completion
 
-## v0.1.2 - 2017-11-07
+## 0.1.2 - 2017-11-07
 ### Added:
  - functional tests
  - client can emit events (`close`, `error`)
@@ -37,12 +41,12 @@ All notable changes to this project will be documented in this file.
  - handle broken connection
  - retrieve value after decrement
  
-## v0.1.1 - 2017-10-19
+## 0.1.1 - 2017-10-19
 ### Fixed:
  - autoload in composer.json
 
-## v0.1.0 - 2017-10-18
+## 0.1.0 - 2017-10-18
 - First tagged release
 
-## v0.0.0 - 2017-10-08
+## 0.0.0 - 2017-10-08
 - First initial commit 
