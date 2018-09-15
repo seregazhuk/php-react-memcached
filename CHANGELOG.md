@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 0.2.1 - 2018-09-14
-### Update:
+### Updated:
  - Move to final classes and type-hints
 
 ## 0.2.0 - 2018-06-26
