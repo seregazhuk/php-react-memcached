@@ -141,18 +141,6 @@ class Client extends EventEmitter
     }
 
     /**
-     * Closes the connection when all requests are resolved
-     */
-    public function end(): void
-    {
-        $this->isEnding = true;
-
-        if ($this->pool->isEmpty()) {
-            $this->close();
-        }
-    }
-
-    /**
      * Forces closing the connection and rejects all pending requests
      */
     public function close(): void
