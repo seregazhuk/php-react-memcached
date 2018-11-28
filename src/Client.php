@@ -92,7 +92,7 @@ class Client extends EventEmitter
      * @param array $args
      * @return Promise|PromiseInterface
      */
-    public function __call(string $name, array $args)
+    public function __call(string $name, array $args): PromiseInterface
     {
         $request = new Request($name);
 
