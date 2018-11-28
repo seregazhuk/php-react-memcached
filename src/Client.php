@@ -10,8 +10,6 @@ use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
-use seregazhuk\React\Memcached\Request\Request;
-use seregazhuk\React\Memcached\Request\RequestsPool;
 
 /**
  * @method PromiseInterface set(string $key, mixed $value, int $flag = 0, int $exp = 0)
@@ -35,9 +33,9 @@ class Client extends EventEmitter
     private $parser;
 
     /**
-     * @var RequestsPool
+     * @var Request[]
      */
-    private $pool;
+    private $requests = [];
 
     /**
      * Indicates that the connection is closed.
@@ -67,7 +65,6 @@ class Client extends EventEmitter
     {
         $this->parser = $parser;
         $this->connection = $connection;
-        $this->pool = new RequestsPool();
 
         $this->setConnectionHandlers();
     }
@@ -80,7 +77,7 @@ class Client extends EventEmitter
         });
 
         $this->connection->on('failed', function () {
-            $this->pool->rejectAll(new ConnectionClosedException());
+            $this->rejectAll(new ConnectionClosedException());
         });
 
         $this->connection->on('close', function () {
@@ -105,7 +102,7 @@ class Client extends EventEmitter
             try {
                 $command = $this->parser->makeCommand($name, $args);
                 $this->connection->write($command);
-                $this->pool->add($request);
+                $this->requests[] = $request;
             } catch (WrongCommandException $e) {
                 $request->reject($e);
             }
@@ -120,12 +117,12 @@ class Client extends EventEmitter
      */
     public function resolveRequests(array $responses): void
     {
-        if ($this->pool->isEmpty()) {
+        if (empty($this->requests)) {
             throw new Exception('Received unexpected response, no matching request found');
         }
 
         foreach ($responses as $response) {
-            $request = $this->pool->shift();
+            $request = array_shift($this->requests);
 
             try {
                 $parsedResponse = $this->parser->parseResponse($request->command(), $response);
@@ -135,7 +132,7 @@ class Client extends EventEmitter
             }
         }
 
-        if ($this->isEnding && $this->pool->isEmpty()) {
+        if ($this->isEnding && empty($this->requests)) {
             $this->close();
         }
     }
@@ -155,6 +152,14 @@ class Client extends EventEmitter
         $this->connection->close();
         $this->emit('close');
 
-        $this->pool->rejectAll(new ConnectionClosedException());
+        $this->rejectAll(new ConnectionClosedException());
+    }
+
+    private function rejectAll(Exception $exception): void
+    {
+        while (!empty($this->requests)) {
+            $request = array_shift($this->requests);
+            $request->reject($exception);
+        }
     }
 }
