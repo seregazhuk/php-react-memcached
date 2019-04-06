@@ -6,36 +6,36 @@ use seregazhuk\React\Memcached\Client;
 use seregazhuk\React\Memcached\Factory as ClientFactory;
 use seregazhuk\React\PromiseTesting\TestCase;
 
-class ClientTest extends TestCase
+final class ClientTest extends TestCase
 {
     /**
      * @var Client
      */
-    protected $client;
+    private $client;
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->client = ClientFactory::createClient($this->loop);
     }
 
     /** @test */
-    public function it_stores_and_retrieves_values()
+    public function it_stores_and_retrieves_values(): void
     {
         $this->client->set('key', [12345]);
         $this->assertPromiseFulfillsWith($this->client->get('key'), [12345]);
     }
 
     /** @test */
-    public function it_stores_and_retrieves_values_with_prefixed_keys()
+    public function it_stores_and_retrieves_values_with_prefixed_keys(): void
     {
         $this->client->set('prefix:some-key', [12345]);
         $this->assertPromiseFulfillsWith($this->client->get('prefix:some-key'), [12345]);
     }
 
     /** @test */
-    public function it_flashes_database()
+    public function it_flashes_database(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', 12345));
         $this->waitForPromiseToFulfill($this->client->flushAll());
@@ -44,7 +44,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_increments_value()
+    public function it_increments_value(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', 11));
         $this->waitForPromiseToFulfill($this->client->incr('key', 1));
@@ -53,7 +53,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_decrements_value()
+    public function it_decrements_value(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', 10));
         $this->waitForPromiseToFulfill($this->client->decr('key', 1));
@@ -62,7 +62,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_stores_value_with_expiration()
+    public function it_stores_value_with_expiration(): void
     {
         $this->waitForPromise($this->client->set('key', [12345], 0 , 1));
 
@@ -72,7 +72,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_deletes_key()
+    public function it_deletes_key(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
         $this->waitForPromiseToFulfill($this->client->delete('key'));
@@ -81,7 +81,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_replaces_value()
+    public function it_replaces_value(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
         $this->waitForPromiseToFulfill($this->client->replace('key', 'new value'));
@@ -90,7 +90,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_touches_key()
+    public function it_touches_key(): void
     {
         $this->waitForPromiseToFulfill($this->client->set('key', [12345], 0 , 1));
         $this->waitForPromiseToFulfill($this->client->touch('key', 10));
@@ -100,7 +100,7 @@ class ClientTest extends TestCase
     }
 
     /** @test */
-    public function it_retrieves_server_stats()
+    public function it_retrieves_server_stats(): void
     {
         $stats = $this->waitForPromise($this->client->stats());
         $this->assertInternalType('array', $stats);
