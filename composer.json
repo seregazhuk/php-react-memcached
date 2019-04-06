@@ -20,7 +20,7 @@
         "react/socket": "^1.0",
         "react/promise": "^2.7",
         "react/event-loop": "^1.0",
-        "evenement/evenement": "3"
+        "evenement/evenement": "^3.0"
     },
     "autoload": {
         "psr-4": {
