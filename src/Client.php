@@ -56,20 +56,26 @@ class Client extends EventEmitter
 
     protected function setConnectionHandlers(): void
     {
-        $this->connection->on('data', function ($chunk) {
+        $this->connection->on(
+            'data', function ($chunk) {
             $parsed = $this->parser->parseRawResponse($chunk);
             $this->resolveRequests($parsed);
-        });
+        }
+        );
 
-        $this->connection->on('failed', function () {
+        $this->connection->on(
+            'failed', function () {
             $this->requests->rejectAll(new ConnectionClosedException());
-        });
+        }
+        );
 
-        $this->connection->on('close', function () {
+        $this->connection->on(
+            'close', function () {
             if (!$this->isEnding) {
                 $this->emit('error', [new ConnectionClosedException()]);
             }
-        });
+        }
+        );
     }
 
     public function __call(string $name, array $args): PromiseInterface

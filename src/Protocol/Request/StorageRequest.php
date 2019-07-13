@@ -18,7 +18,7 @@ final class StorageRequest extends Request
         // Serialize non-numeric values. Numeric values should stay as they are
         // because they could be incremented/decremented.
         $value = is_numeric($value) ? $value : serialize($value);
-        
+
         $command = implode(' ', [$command, $key, $flags, $expiration, strlen($value)]);
 
         $this->command = $command . Parser::COMMAND_SEPARATOR . $value . Parser::COMMAND_SEPARATOR;
