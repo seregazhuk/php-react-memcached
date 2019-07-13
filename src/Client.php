@@ -26,7 +26,7 @@ use seregazhuk\React\Memcached\Request\RequestsPool;
  * @method PromiseInterface touch($key, $exp)
  * @method PromiseInterface add($key, $value)
  */
-class Client extends EventEmitter
+final class Client extends EventEmitter
 {
     private $parser;
 
