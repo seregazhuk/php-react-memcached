@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Request;
 
 use seregazhuk\React\Memcached\Exception\Exception;
 
