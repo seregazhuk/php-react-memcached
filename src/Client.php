@@ -10,6 +10,8 @@ use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
 use seregazhuk\React\Memcached\Exception\Exception;
 use seregazhuk\React\Memcached\Exception\WrongCommandException;
 use seregazhuk\React\Memcached\Protocol\Parser;
+use seregazhuk\React\Memcached\Request\Request;
+use seregazhuk\React\Memcached\Request\RequestsPool;
 
 /**
  * @method PromiseInterface set(string $key, mixed $value, int $flag = 0, int $exp = 0)
