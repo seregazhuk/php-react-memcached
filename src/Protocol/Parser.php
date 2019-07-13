@@ -69,19 +69,19 @@ final class Parser
     private const COMMAND_FLUSH_ALL = 'flushAll';
 
     private const COMMANDS = [
-            self::COMMAND_ADD,
-            self::COMMAND_DECREMENT,
-            self::COMMAND_DELETE,
-            self::COMMAND_FLUSH_ALL,
-            self::COMMAND_GET,
-            self::COMMAND_INCREMENT,
-            self::COMMAND_REPLACE,
-            self::COMMAND_SET,
-            self::COMMAND_STATS,
-            self::COMMAND_TOUCH,
-            self::COMMAND_VERBOSITY,
-            self::COMMAND_VERSION,
-        ];
+        self::COMMAND_ADD,
+        self::COMMAND_DECREMENT,
+        self::COMMAND_DELETE,
+        self::COMMAND_FLUSH_ALL,
+        self::COMMAND_GET,
+        self::COMMAND_INCREMENT,
+        self::COMMAND_REPLACE,
+        self::COMMAND_SET,
+        self::COMMAND_STATS,
+        self::COMMAND_TOUCH,
+        self::COMMAND_VERBOSITY,
+        self::COMMAND_VERSION,
+    ];
 
     /**
      * @param string $data
