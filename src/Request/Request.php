@@ -1,6 +1,6 @@
 <?php
 
-namespace seregazhuk\React\Memcached;
+namespace seregazhuk\React\Memcached\Request;
 
 use Exception;
 use React\Promise\Deferred;
