@@ -34,12 +34,9 @@ final class Connection extends EventEmitter
     {
         $this->isConnecting = true;
 
-        return $this->connector
-            ->connect($this->address)
-            ->then(
-                [$this, 'onConnected'],
-                [$this, 'onFailed']
-            );
+        return $this->connector->connect($this->address)->then(
+            [$this, 'onConnected'], [$this, 'onFailed']
+        );
     }
 
     public function onConnected(ConnectionInterface $stream): void
