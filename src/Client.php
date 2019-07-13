@@ -33,9 +33,9 @@ class Client extends EventEmitter
     private $parser;
 
     /**
-     * @var Request[]
+     * @var RequestsPool
      */
-    private $requests = [];
+    private $requests;
 
     /**
      * Indicates that the connection is closed.
@@ -65,6 +65,7 @@ class Client extends EventEmitter
     {
         $this->parser = $parser;
         $this->connection = $connection;
+        $this->requests = new RequestsPool();
 
         $this->setConnectionHandlers();
     }
@@ -77,7 +78,7 @@ class Client extends EventEmitter
         });
 
         $this->connection->on('failed', function () {
-            $this->rejectAll(new ConnectionClosedException());
+            $this->requests->rejectAll(new ConnectionClosedException());
         });
 
         $this->connection->on('close', function () {
@@ -102,7 +103,7 @@ class Client extends EventEmitter
             try {
                 $command = $this->parser->makeCommand($name, $args);
                 $this->connection->write($command);
-                $this->requests[] = $request;
+                $this->requests->add($request);
             } catch (WrongCommandException $e) {
                 $request->reject($e);
             }
@@ -117,12 +118,12 @@ class Client extends EventEmitter
      */
     public function resolveRequests(array $responses): void
     {
-        if (empty($this->requests)) {
+        if ($this->requests->isEmpty()) {
             throw new Exception('Received unexpected response, no matching request found');
         }
 
         foreach ($responses as $response) {
-            $request = array_shift($this->requests);
+            $request = $this->requests->shift();
 
             try {
                 $parsedResponse = $this->parser->parseResponse($request->command(), $response);
@@ -132,7 +133,7 @@ class Client extends EventEmitter
             }
         }
 
-        if ($this->isEnding && empty($this->requests)) {
+        if ($this->isEnding && $this->requests->isEmpty()) {
             $this->close();
         }
     }
@@ -152,14 +153,6 @@ class Client extends EventEmitter
         $this->connection->close();
         $this->emit('close');
 
-        $this->rejectAll(new ConnectionClosedException());
-    }
-
-    private function rejectAll(Exception $exception): void
-    {
-        while (!empty($this->requests)) {
-            $request = array_shift($this->requests);
-            $request->reject($exception);
-        }
+        $this->requests->rejectAll(new ConnectionClosedException());
     }
 }
