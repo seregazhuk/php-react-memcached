@@ -140,4 +140,16 @@ class Client extends EventEmitter
 
         $this->requests->rejectAll(new ConnectionClosedException());
     }
+
+    /**
+     * Closes the connection once all requests are resolved
+     */
+    public function end(): void
+    {
+        $this->isEnding = true;
+
+        if ($this->requests->isEmpty()) {
+            $this->close();
+        }
+    }
 }
