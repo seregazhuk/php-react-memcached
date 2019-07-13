@@ -3,7 +3,6 @@
 namespace seregazhuk\React\Memcached;
 
 use Evenement\EventEmitter;
-use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use seregazhuk\React\Memcached\Connection\Connection;
 use seregazhuk\React\Memcached\Exception\ConnectionClosedException;
@@ -29,40 +28,23 @@ use seregazhuk\React\Memcached\Request\RequestsPool;
  */
 class Client extends EventEmitter
 {
-    /**
-     * @var Parser
-     */
     private $parser;
 
-    /**
-     * @var RequestsPool
-     */
     private $requests;
 
     /**
      * Indicates that the connection is closed.
-     *
-     * @var bool
      */
     private $isClosed = false;
 
     /**
      * Indicates that we don't accept new requests but we are still waiting for
      * pending requests to be resolved.
-     *
-     * @var bool
      */
     private $isEnding = false;
 
-    /**
-     * @var Connection
-     */
     private $connection;
 
-    /**
-     * @param Connection $connection
-     * @param Parser $parser
-     */
     public function __construct(Connection $connection, Parser $parser)
     {
         $this->parser = $parser;
@@ -90,11 +72,6 @@ class Client extends EventEmitter
         });
     }
 
-    /**
-     * @param string $name
-     * @param array $args
-     * @return Promise|PromiseInterface
-     */
     public function __call(string $name, array $args): PromiseInterface
     {
         $request = new Request($name);

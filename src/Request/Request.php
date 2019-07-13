@@ -9,37 +9,22 @@ use React\Promise\PromiseInterface;
 
 final class Request
 {
-    /**
-     * @var Deferred
-     */
     private $deferred;
 
-    /**
-     * @var string
-     */
     private $command;
 
-    /**
-     * @param string $command
-     */
     public function __construct(string $command)
     {
         $this->deferred = new Deferred();
         $this->command = $command;
     }
 
-    /**
-     * @return string
-     */
     public function command(): string
     {
         return $this->command;
     }
 
-    /**
-     * @return Promise|PromiseInterface
-     */
-    public function promise()
+    public function promise(): PromiseInterface
     {
         return $this->deferred->promise();
     }
@@ -52,9 +37,6 @@ final class Request
         $this->deferred->resolve($value);
     }
 
-    /**
-     * @param Exception $exception
-     */
     public function reject(Exception $exception): void
     {
         $this->deferred->reject($exception);
