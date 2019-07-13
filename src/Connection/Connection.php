@@ -34,12 +34,9 @@ final class Connection extends EventEmitter
     {
         $this->isConnecting = true;
 
-        return $this->connector
-            ->connect($this->address)
-            ->then(
-                [$this, 'onConnected'],
-                [$this, 'onFailed']
-            );
+        return $this->connector->connect($this->address)->then(
+            [$this, 'onConnected'], [$this, 'onFailed']
+        );
     }
 
     public function onConnected(ConnectionInterface $stream): void
@@ -47,9 +44,11 @@ final class Connection extends EventEmitter
         $this->stream = $stream;
         $this->isConnecting = false;
 
-        $stream->on('data', function ($chunk) {
+        $stream->on(
+            'data', function ($chunk) {
             $this->emit('data', [$chunk]);
-        });
+        }
+        );
 
         $stream->on('close', [$this, 'close']);
 
