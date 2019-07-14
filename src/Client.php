@@ -58,23 +58,23 @@ class Client extends EventEmitter
     {
         $this->connection->on(
             'data', function ($chunk) {
-            $parsed = $this->parser->parseRawResponse($chunk);
-            $this->resolveRequests($parsed);
-        }
+                $parsed = $this->parser->parseRawResponse($chunk);
+                $this->resolveRequests($parsed);
+            }
         );
 
         $this->connection->on(
             'failed', function () {
-            $this->requests->rejectAll(new ConnectionClosedException());
-        }
+                $this->requests->rejectAll(new ConnectionClosedException());
+            }
         );
 
         $this->connection->on(
             'close', function () {
-            if (!$this->isEnding) {
-                $this->emit('error', [new ConnectionClosedException()]);
+                if (!$this->isEnding) {
+                    $this->emit('error', [new ConnectionClosedException()]);
+                }
             }
-        }
         );
     }
 
