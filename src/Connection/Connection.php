@@ -46,8 +46,8 @@ final class Connection extends EventEmitter
 
         $stream->on(
             'data', function ($chunk) {
-            $this->emit('data', [$chunk]);
-        }
+                $this->emit('data', [$chunk]);
+            }
         );
 
         $stream->on('close', [$this, 'close']);
